@@ -57,8 +57,8 @@ Registers Registers(
     .clk_i      (clk_i),
     .RSaddr_i   (ins[25:21]),
     .RTaddr_i   (ins[20:16]),
-    .RDaddr_i   (),
-    .RDdata_i   (),
+    .RDaddr_i   (MUX_RegDst.data_o),
+    .RDdata_i   (MUX_MemDst.data_o),
     .RegWrite_i (),
     .RSdata_o   (ALU.data0_i),
     .RTdata_o   (MUX_ALUSrc.data0_i)
@@ -68,7 +68,7 @@ MUX5 MUX_RegDst(
     .data0_i    (ins[20:16]),
     .data1_i    (ins[15:11]),
     .select_i   (),
-    .data_o     (Registers.RDaddr_i)
+    .data_o     ()
 );
 
 MUX32 MUX_ALUSrc(
@@ -87,7 +87,7 @@ ALU ALU(
     .data0_i    (),
     .data1_i    (),
     .ALUCtrl_i  (),
-    .data_o     (Registers.RDdata_i),
+    .data_o     (),
     .zero_o     ()
 );
 
@@ -96,7 +96,18 @@ ALU_Control ALU_Control(
     .ALUOp_i    (),
     .ALUCtrl_o  (ALU.ALUCtrl_i)
 );
+MUX32 MUX_MemDst(
+    .data0_i    (ALU.data_o),
+    .data1_i    (Data_Memory.RDdata_o),
+    .select_i   (Control.MemToReg_o),
+    .data_o     ()
+  );
 Memory Data_Memory(
-
+  .clk_i(clk_i),
+  .RDaddr_i(ALU.data_o),
+  .RDdata_i(Registers.RTdata_o),
+  .MemWrite_i(Control.MemWrite_o),
+  .MemRead_i(),
+  .RDdata_o()
   );
 endmodule

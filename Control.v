@@ -15,7 +15,7 @@ assign RegDst_o = ~ is_itype;
 //we need add if it is i type or lw or sw
 assign ALUOp_o = ((Op_i == 6'b000000) ? 0 :
                  (Op_i == 6'b001000) ? ALU_Control.SUB : ALU_Control.ADD);
-assign RegWrite_o = 1;
+assign RegWrite_o = (Op_i == 6'b101011) ? 0 : 1;
 // if it's sw
 assign MemWrite_o = (Op_i == 6'b101011) ? 1 : 0;
 // if it's lw
