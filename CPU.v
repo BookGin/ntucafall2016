@@ -1,6 +1,17 @@
+`include "Data_Memory.v"
+`include "Control.v"
+`include "Adder.v"
+`include "MUX5.v"
+`include "MUX32.v"
+`include "PC.v"
+`include "Registers.v"
+`include "Instruction_Memory.v"
+`include "ALU.v"
+`include "ALU_Control.v"
+`include "Sign_Extend.v"
 module CPU
 (
-    clk_i, 
+    clk_i,
     rst_i,
     start_i
 );
@@ -30,7 +41,7 @@ Adder Add_PC(
 );
 
 PC PC(
-    .clk_i      (clk_i), 
+    .clk_i      (clk_i),
     .rst_i      (rst_i),
     .start_i    (start_i),
     .pc_i       (),
@@ -38,7 +49,7 @@ PC PC(
 );
 
 Instruction_Memory Instruction_Memory(
-    .addr_i     (pc), 
+    .addr_i     (pc),
     .instr_o    (ins)
 );
 
@@ -46,13 +57,13 @@ Registers Registers(
     .clk_i      (clk_i),
     .RSaddr_i   (ins[25:21]),
     .RTaddr_i   (ins[20:16]),
-    .RDaddr_i   (), 
+    .RDaddr_i   (),
     .RDdata_i   (),
-    .RegWrite_i (), 
-    .RSdata_o   (ALU.data0_i), 
-    .RTdata_o   (MUX_ALUSrc.data0_i) 
+    .RegWrite_i (),
+    .RSdata_o   (ALU.data0_i),
+    .RTdata_o   (MUX_ALUSrc.data0_i)
 );
-  
+
 MUX5 MUX_RegDst(
     .data0_i    (ins[20:16]),
     .data1_i    (ins[15:11]),
@@ -71,7 +82,7 @@ Sign_Extend Sign_Extend(
     .data_i     (ins[15:0]),
     .data_o     (MUX_ALUSrc.data1_i)
 );
-  
+
 ALU ALU(
     .data0_i    (),
     .data1_i    (),
@@ -85,5 +96,7 @@ ALU_Control ALU_Control(
     .ALUOp_i    (),
     .ALUCtrl_o  (ALU.ALUCtrl_i)
 );
+Memory Data_Memory(
 
+  );
 endmodule
