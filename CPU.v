@@ -35,8 +35,8 @@ Control Control(
 );
 
 Adder Add_PC(
-    .data0_in   (pc),
-    .data1_in   (PC_FORWARD_NUM),
+    .data0_i    (pc),
+    .data1_i    (PC_FORWARD_NUM),
     .data_o     (PC.pc_i)
 );
 
