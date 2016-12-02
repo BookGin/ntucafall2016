@@ -9,6 +9,7 @@
 `include "ALU.v"
 `include "ALU_Control.v"
 `include "Sign_Extend.v"
+`include "Shift_Left2.v"
 module CPU
 (
     clk_i,
@@ -24,27 +25,49 @@ input               start_i;
 wire [31:0] ins;
 wire [31:0] pc;
 
-parameter PC_FORWARD_NUM = 32'd4;
+parameter PC_ADVANCE_NUM = 32'd4;
+wire [31:0] pc_advanced;
+wire [31:0] sign_extended_immed;
+wire pc_src_select = Control.IsBranch_o & ALU.zero_o;
 
 Control Control(
     .Op_i       (ins[31:26]),
     .RegDst_o   (MUX_RegDst.select_i),
     .ALUOp_o    (ALU_Control.ALUOp_i),
     .ALUSrc_o   (MUX_ALUSrc.select_i),
-    .RegWrite_o (Registers.RegWrite_i)
+    .RegWrite_o (Registers.RegWrite_i),
+    .IsBranch_o ()
 );
 
-Adder Add_PC(
-    .data0_in   (pc),
-    .data1_in   (PC_FORWARD_NUM),
-    .data_o     (PC.pc_i)
+Adder Add_PCAdvance(
+    .data0_i    (pc),
+    .data1_i    (PC_ADVANCE_NUM),
+    .data_o     (pc_advanced)
+);
+
+Shift_Left2 Shift_Left2(
+    .data_i     (sign_extended_immed),
+    .data_o     ()
+);
+
+Adder Add_PCBranch(
+    .data0_i    (pc_advanced),
+    .data1_i    (Shift_Left2.data_o),
+    .data_o     ()
+);
+
+MUX32 MUX_PCSrc(
+    .data0_i    (pc_advanced),
+    .data1_i    (Add_PCBranch.data_o),
+    .select_i   (pc_src_select),
+    .data_o     ()
 );
 
 PC PC(
     .clk_i      (clk_i),
     .rst_i      (rst_i),
     .start_i    (start_i),
-    .pc_i       (),
+    .pc_i       (MUX_PCSrc.data_o),
     .pc_o       (pc)
 );
 
@@ -73,14 +96,14 @@ MUX5 MUX_RegDst(
 
 MUX32 MUX_ALUSrc(
     .data0_i    (),
-    .data1_i    (),
+    .data1_i    (sign_extended_immed),
     .select_i   (),
     .data_o     (ALU.data1_i)
 );
 
-Sign_Extend Sign_Extend(
+Sign_Extend Sign_ExtendALU(
     .data_i     (ins[15:0]),
-    .data_o     (MUX_ALUSrc.data1_i)
+    .data_o     (sign_extended_immed)
 );
 
 ALU ALU(
