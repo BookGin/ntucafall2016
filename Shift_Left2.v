@@ -1,4 +1,4 @@
-module Left_Shift2 (
+module Shift_Left2 (
   input [31:0] data_i,
   output [31:0] data_o
 );
