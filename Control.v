@@ -19,15 +19,15 @@ parameter JMP = 6'b000010;
 
 // "don't care" is set to 0
 assign RegDst_o = (Op_i == R_TYPE);
-assign ALUSrc_o = (Op_i == LW) | (Op_i == SW);
+assign ALUSrc_o = (Op_i == ADDI) | (Op_i == LW) | (Op_i == SW);
 assign MemToReg_o = (Op_i == LW);
-assign RegWrite_o = (Op_i == R_TYPE) | (Op_i == LW);
+assign RegWrite_o = (Op_i == R_TYPE) | (Op_i == ADDI) | (Op_i == LW);
 assign MemWrite_o = (Op_i == SW);
 assign IsBranch_o = (Op_i == BEQ);
 assign IsJump_o = (Op_i == JMP);
 
 assign ALUOp_o = (
-  (Op_i == LW || Op_i == SW) ? ALU_Control.ADD :
+  (Op_i == ADDI || Op_i == LW || Op_i == SW) ? ALU_Control.ADD :
   (Op_i == BEQ) ? ALU_Control.SUB : 
   ALU_Control.R_TYPE
 );
