@@ -4,28 +4,31 @@ module ALU_Control (
   output [2:0] ALUCtrl_o
 );
 
-parameter ADD = 6'b100000;
-parameter SUB = 6'b100010;
-parameter MUL = 6'b011000;
-parameter AND = 6'b100100;
-parameter OR  = 6'b100101;
+parameter ADD_FUNCT = 6'b100000;
+parameter SUB_FUNCT = 6'b100010;
+parameter MUL_FUNCT = 6'b011000;
+parameter AND_FUNCT = 6'b100100;
+parameter OR_FUNCT = 6'b100101;
 
-wire [2:0] alu_rtype_op;
-wire [2:0] alu_itype_op;
-
-assign alu_rtype_op = (
-  (funct_i == ADD) ? ALU.ADD :
-  (funct_i == SUB) ? ALU.SUB :
-  (funct_i == MUL) ? ALU.MUL :
-  (funct_i == AND) ? ALU.AND :
-  (funct_i == OR) ? ALU.OR :
-  0
+wire [2:0] alu_r_type_op;
+assign alu_r_type_op = (
+  (funct_i == ADD_FUNCT) ? ALU.ADD :
+  (funct_i == SUB_FUNCT) ? ALU.SUB :
+  (funct_i == MUL_FUNCT) ? ALU.MUL :
+  (funct_i == AND_FUNCT) ? ALU.AND :
+  (funct_i == OR_FUNCT) ? ALU.OR :
+  ALU.INVALID_OP
 );
 
-parameter ADDI = 2'b01;
-parameter SUBI = 2'b10; //not yet implement
-assign alu_itype_op = (ALUOp_i == ADDI) ? ALU.ADD : 0;
+parameter ADD = 2'b00;
+parameter SUB = 2'b01;
+parameter R_TYPE = 2'b11;
 
-assign ALUCtrl_o = alu_itype_op ? alu_itype_op : alu_rtype_op;
+assign ALUCtrl_o = (
+  (ALUOp_i == R_TYPE) ? alu_r_type_op :
+  (ALUOp_i == ADD) ? ALU.ADD :
+  (ALUOp_i == SUB) ? ALU.SUB :
+  ALU.INVALID_OP
+);
 
 endmodule
