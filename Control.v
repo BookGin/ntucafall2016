@@ -6,7 +6,8 @@ module Control (
   output RegWrite_o,
   output MemToReg_o,
   output MemWrite_o,
-  output IsBranch_o
+  output IsBranch_o,
+  output IsJump_o 
 );
 
 parameter AND = 6'b000000;
@@ -34,5 +35,6 @@ assign MemToReg_o = (Op_i == 6'b100011) ? 1 : 0;
 
 // if it's a branch instrution
 assign IsBranch_o = (Op_i == BEQ);
+assign IsJump_o = (Op_i == JMP);
 
 endmodule

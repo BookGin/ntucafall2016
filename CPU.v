@@ -28,7 +28,7 @@ wire [31:0] pc;
 parameter PC_ADVANCE_NUM = 32'd4;
 wire [31:0] pc_advanced;
 wire [31:0] sign_extended_immed;
-wire pc_src_select = Control.IsBranch_o & ALU.zero_o;
+wire pc_src_branch_select = Control.IsBranch_o & ALU.zero_o;
 
 Control Control(
     .Op_i       (ins[31:26]),
@@ -36,7 +36,8 @@ Control Control(
     .ALUOp_o    (ALU_Control.ALUOp_i),
     .ALUSrc_o   (MUX_ALUSrc.select_i),
     .RegWrite_o (Registers.RegWrite_i),
-    .IsBranch_o ()
+    .IsBranch_o (),
+    .IsJump_o ()
 );
 
 Adder Add_PCAdvance(
@@ -45,21 +46,33 @@ Adder Add_PCAdvance(
     .data_o     (pc_advanced)
 );
 
-Shift_Left2 Shift_Left2(
+Shift_Left2 Shift_Left2_Branch(
     .data_i     (sign_extended_immed),
     .data_o     ()
 );
 
 Adder Add_PCBranch(
     .data0_i    (pc_advanced),
-    .data1_i    (Shift_Left2.data_o),
+    .data1_i    (Shift_Left2_Branch.data_o),
     .data_o     ()
 );
 
-MUX32 MUX_PCSrc(
+MUX32 MUX_PCSrc_Branch(
     .data0_i    (pc_advanced),
     .data1_i    (Add_PCBranch.data_o),
-    .select_i   (pc_src_select),
+    .select_i   (pc_src_branch_select),
+    .data_o     ()
+);
+
+Shift_Left2 Shift_Left2_Jump(
+    .data_i     (ins),
+    .data_o     ()
+);
+
+MUX32 MUX_PCSrc_Jump(
+    .data0_i    (MUX_PCSrc_Branch.data_o),
+    .data1_i    ({pc_advanced[31:28], Shift_Left2_Jump.data_o[27:0]}),
+    .select_i   (Control.IsJump_o),
     .data_o     ()
 );
 
@@ -67,7 +80,7 @@ PC PC(
     .clk_i      (clk_i),
     .rst_i      (rst_i),
     .start_i    (start_i),
-    .pc_i       (MUX_PCSrc.data_o),
+    .pc_i       (MUX_PCSrc_Jump.data_o),
     .pc_o       (pc)
 );
 
