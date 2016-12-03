@@ -5,3 +5,5 @@ Test for those instructions:
 - sub 
 - mul 
 - addi
+
+You can compare output with `./correct_output.txt` by `diff` or `vimdiff`.
