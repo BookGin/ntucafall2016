@@ -10,6 +10,12 @@
 `include "ALU_Control.v"
 `include "Sign_Extend.v"
 `include "Shift_Left2.v"
+//pipeline registers
+`include "IF_ID.v"
+`include "ID_EX.v"
+`include "EX_MEM.v"
+`include "MEM_WB.v"
+
 module CPU
 (
     clk_i,
@@ -31,9 +37,9 @@ wire [31:0] sign_extended_immed;
 wire pc_src_branch_select = Control.IsBranch_o & ALU.zero_o;
 
 Control Control(
-    .Op_i       (ins[31:26]),
+    .Op_i       (IF_ID.inst_o[31:26]),
     .RegDst_o   (MUX_RegDst.select_i),
-    .ALUOp_o    (ALU_Control.ALUOp_i),
+    .ALUOp_o    (),
     .ALUSrc_o   (MUX_ALUSrc.select_i),
     .RegWrite_o (Registers.RegWrite_i),
     .IsBranch_o (),
@@ -65,7 +71,7 @@ MUX32 MUX_PCSrc_Branch(
 );
 
 Shift_Left2 Shift_Left2_Jump(
-    .data_i     (ins),
+    .data_i     (IF_ID.inst_o),
     .data_o     ()
 );
 
@@ -89,20 +95,29 @@ Instruction_Memory Instruction_Memory(
     .instr_o    (ins)
 );
 
+IF_ID IF_ID(
+	    .clk_i(clk_i),
+	    .inst_i(ins),
+	    .pc_i      (pc),
+	    .inst_o     (),
+	    .pc_o       ()
+	    );
+
+  
 Registers Registers(
     .clk_i      (clk_i),
-    .RSaddr_i   (ins[25:21]),
-    .RTaddr_i   (ins[20:16]),
+    .RSaddr_i   (IF_ID.inst_o[25:21]),
+    .RTaddr_i   (IF_ID.inst_o[20:16]),
     .RDaddr_i   (MUX_RegDst.data_o),
     .RDdata_i   (MUX_MemDst.data_o),
     .RegWrite_i (),
-    .RSdata_o   (ALU.data0_i),
+    .RSdata_o   (),
     .RTdata_o   (MUX_ALUSrc.data0_i)
 );
 
 MUX5 MUX_RegDst(
-    .data0_i    (ins[20:16]),
-    .data1_i    (ins[15:11]),
+    .data0_i    (IF_ID.inst_o[20:16]),
+    .data1_i    (IF_ID.inst_o[15:11]),
     .select_i   (),
     .data_o     ()
 );
@@ -111,26 +126,26 @@ MUX32 MUX_ALUSrc(
     .data0_i    (),
     .data1_i    (sign_extended_immed),
     .select_i   (),
-    .data_o     (ALU.data1_i)
+    .data_o     ()
 );
 
 Sign_Extend Sign_ExtendALU(
-    .data_i     (ins[15:0]),
+    .data_i     (IF_ID.inst_o[15:0]),
     .data_o     (sign_extended_immed)
 );
 
 ALU ALU(
-    .data0_i    (),
-    .data1_i    (),
-    .ALUCtrl_i  (),
+    .data0_i    (Registers.RSdata_o),
+    .data1_i    (MUX_ALUSrc.data_o),
+    .ALUCtrl_i  (ALU_Control.ALUCtrl_o),
     .data_o     (),
     .zero_o     ()
 );
 
 ALU_Control ALU_Control(
-    .funct_i    (ins[5:0]),
-    .ALUOp_i    (),
-    .ALUCtrl_o  (ALU.ALUCtrl_i)
+    .funct_i    (IF_ID.inst_o[5:0]),
+    .ALUOp_i    (Control.ALUOp_o),
+    .ALUCtrl_o  ()
 );
 
 MUX32 MUX_MemDst(
