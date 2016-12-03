@@ -132,12 +132,14 @@ ALU_Control ALU_Control(
     .ALUOp_i    (),
     .ALUCtrl_o  (ALU.ALUCtrl_i)
 );
+
 MUX32 MUX_MemDst(
     .data0_i    (ALU.data_o),
     .data1_i    (Data_Memory.RDdata_o),
     .select_i   (Control.MemToReg_o),
     .data_o     ()
   );
+
 Memory Data_Memory(
   .clk_i(clk_i),
   .RDaddr_i(ALU.data_o),
@@ -146,4 +148,5 @@ Memory Data_Memory(
   .MemRead_i(),
   .RDdata_o()
   );
+
 endmodule
