@@ -33,8 +33,14 @@ module ID_EX
 
    input clk_i;
    input [31:0] 	       inst_i, pc_i, RDData0_i, RDData1_i, SignExtended_i;
-   output reg [31:0] 	      inst_o, pc_o, RDData0_o, RDData1_o, SignExtended_o;
+   output [31:0] 	      inst_o, pc_o, RDData0_o, RDData1_o, SignExtended_o;
+   reg [31:0] 	      inst_or=0, pc_or=0, RDData0_or=0, RDData1_or=0, SignExtended_or=0;
 
+  assign inst_o =inst_or;
+  assign pc_o = pc_or;
+  assign RDData0_o = RDData0_or;
+  assign RDData1_o = RDData1_or;
+  assign SignExtended_o = SignExtended_or;
 
 
 // Control
@@ -77,11 +83,11 @@ assign IsJump_o = IsJump_or;
 
 
 always@(posedge clk_i) begin
-   RDData0_o <= RDData0_i;
-   RDData1_o <= RDData1_i;
-   SignExtended_o <= SignExtended_i;
-   pc_o <= pc_i;
-
+   RDData0_or <= RDData0_i;
+   RDData1_or <= RDData1_i;
+   SignExtended_or <= SignExtended_i;
+   pc_or <= pc_i;
+   inst_or <= inst_i;
    //control
    RegDst_or <= RegDst_i;
    ALUOp_or <= ALUOp_i;
@@ -91,8 +97,6 @@ always@(posedge clk_i) begin
    MemWrite_or <= MemWrite_i;
    IsBranch_or <= IsBranch_i;
    IsJump_or <= IsJump_i;
-
-
 end
 
 endmodule

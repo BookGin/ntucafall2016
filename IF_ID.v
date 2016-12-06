@@ -9,12 +9,14 @@ module IF_ID
 
   input clk_i;
   input [31:0]  inst_i, pc_i;
-  output reg [31:0] inst_o = 32'd0, pc_o =32'd0;
+  output [31:0] inst_o, pc_o;
+  reg [31:0] inst_or = 32'd0, pc_or =32'd0;
+  assign inst_o = inst_or;
+  assign pc_o = pc_or;
 
   always@(posedge clk_i) begin
-  inst_o = inst_i;
-  pc_o = pc_i;
-
+  inst_or <= inst_i;
+  pc_or <= pc_i;
 
   end
   endmodule

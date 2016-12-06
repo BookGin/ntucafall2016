@@ -106,6 +106,7 @@ IF_ID IF_ID(
 ID_EX ID_EX(
   .clk_i(clk_i),
   .pc_i(IF_ID.pc_o),
+  .inst_i(IF_ID.inst_o),
   .RDData0_i(Registers.RSdata_o),
   .RDData1_i(Registers.RTdata_o),
   .SignExtended_i(Sign_ExtendALU.data_o),

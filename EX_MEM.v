@@ -23,11 +23,14 @@ module EX_MEM
 
    input clk_i, zero_i;
    input [31:0] 	       pc_i, ALUResult_i, SignExtended_i;
-   output reg [31:0] 	       pc_o, ALUResult_o, SignExtended_o;
+   output [31:0] 	       pc_o, ALUResult_o, SignExtended_o;
+   output reg [31:0] 	       pc_or=0, ALUResult_or=0, SignExtended_or=0;
    output zero_o;
    reg zero_or=0;
    assign zero_o = zero_or;
-
+   assign pc_o = pc_or;
+   assign ALUResult_o = ALUResult_or;
+   assign SignExtended_o =SignExtended_or;
 // Control
 input 		       RegWrite_i;
 input 		       MemToReg_i;
@@ -53,9 +56,9 @@ assign IsBranch_o = IsBranch_or;
 assign IsJump_o = IsJump_or;
 
 always@(posedge clk_i) begin
-   ALUResult_o <= ALUResult_i;
-   SignExtended_o <= SignExtended_i;
-   pc_o <= pc_i;
+   ALUResult_or <= ALUResult_i;
+   SignExtended_or <= SignExtended_i;
+   pc_or <= pc_i;
    zero_or <= zero_i;
 
 //control
