@@ -18,23 +18,14 @@
 `include "MEM_WB.v"
 
 module CPU (
-    clk_i,
-    rst_i,
-    start_i
+  input clk_i,
+  input rst_i,
+  input start_i
 );
 
-// Ports
-input               clk_i;
-input               rst_i;
-input               start_i;
-
-wire [31:0] ins;
-wire [31:0] pc;
-
 parameter PC_ADVANCE_NUM = 32'd4;
-wire [31:0] pc_advanced;
-wire [31:0] sign_extended_immed;
-wire pc_src_branch_select = ID_EX.IsBranch_o & ALU.zero_o;
+wire registers_equal = (Registers.RSdata_o == Registers.RTdata_o);
+wire pc_src_branch_select = Control.IsBranch_o & registers_equal;
 
 Control Control(
     .Op_i       (IF_ID.inst_o[31:26]),
@@ -47,24 +38,24 @@ Control Control(
 );
 
 Adder Add_PCAdvance(
-    .data0_i    (pc),
+    .data0_i    (PC.pc_o),
     .data1_i    (PC_ADVANCE_NUM),
-    .data_o     (pc_advanced)
+    .data_o     ()
 );
 
 Shift_Left2 Shift_Left2_Branch(
-    .data_i     (sign_extended_immed),
+    .data_i     (Sign_Extend.data_o),
     .data_o     ()
 );
 
 Adder Add_PCBranch(
-    .data0_i    (pc_advanced),
+    .data0_i    (IF_ID.pc_o),
     .data1_i    (Shift_Left2_Branch.data_o),
     .data_o     ()
 );
 
 MUX32 MUX_PCSrc_Branch(
-    .data0_i    (pc_advanced),
+    .data0_i    (Add_PCAdvance.data_o),
     .data1_i    (Add_PCBranch.data_o),
     .select_i   (pc_src_branch_select),
     .data_o     ()
@@ -77,8 +68,8 @@ Shift_Left2 Shift_Left2_Jump(
 
 MUX32 MUX_PCSrc_Jump(
     .data0_i    (MUX_PCSrc_Branch.data_o),
-    .data1_i    ({pc_advanced[31:28], Shift_Left2_Jump.data_o[27:0]}),
-    .select_i   (ID_EX.IsJump_o),
+    .data1_i    ({Add_PCAdvance.data_o[31:28], Shift_Left2_Jump.data_o[27:0]}),
+    .select_i   (Control.IsJump_o),
     .data_o     ()
 );
 
@@ -87,21 +78,21 @@ PC PC(
     .rst_i      (rst_i),
     .start_i    (start_i),
     .pc_i       (MUX_PCSrc_Jump.data_o),
-    .pc_o       (pc)
+    .pc_o       ()
 );
 
 Instruction_Memory Instruction_Memory(
-    .addr_i     (pc),
-    .instr_o    (ins)
+    .addr_i     (PC.pc_o),
+    .instr_o    ()
 );
 
 IF_ID IF_ID(
-      .clk_i(clk_i),
-      .inst_i(ins),
-      .pc_i      (pc),
-      .inst_o     (),
-      .pc_o       ()
-      );
+    .clk_i      (clk_i),
+    .inst_i     (Instruction_Memory.instr_o),
+    .pc_i       (Add_PCAdvance.data_o),
+    .inst_o     (),
+    .pc_o       ()
+);
 
 ID_EX ID_EX(
   .clk_i(clk_i),
@@ -109,7 +100,7 @@ ID_EX ID_EX(
   .inst_i(IF_ID.inst_o),
   .RDData0_i(Registers.RSdata_o),
   .RDData1_i(Registers.RTdata_o),
-  .SignExtended_i(Sign_ExtendALU.data_o),
+  .SignExtended_i(Sign_Extend.data_o),
   .RDData0_o(),
   .RDData1_o(),
   .SignExtended_o(),
@@ -170,6 +161,7 @@ MEM_WB MEM_WB(
   .MemToReg_i(EX_MEM.MemToReg_o)
 
 );
+
 Registers Registers(
     .clk_i      (clk_i),
     .RSaddr_i   (IF_ID.inst_o[25:21]),
@@ -195,7 +187,7 @@ MUX32 MUX_ALUSrc(
     .data_o     ()
 );
 
-Sign_Extend Sign_ExtendALU(
+Sign_Extend Sign_Extend(
     .data_i     (IF_ID.inst_o[15:0]),
     .data_o     ()
 );
