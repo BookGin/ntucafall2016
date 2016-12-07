@@ -185,7 +185,7 @@ Sign_Extend Sign_Extend(
 );
 
 ALU ALU(
-    .data0_i    (Registers.RSdata_o),
+    .data0_i    (ID_EX.RDData0_o),
     .data1_i    (MUX_ALUSrc.data_o),
     .ALUCtrl_i  (ALU_Control.ALUCtrl_o),
     .data_o     (),
