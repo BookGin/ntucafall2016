@@ -18,8 +18,6 @@ module ID_EX
    RegWrite_o,
    MemToReg_o,
    MemWrite_o,
-   IsBranch_o,
-   IsJump_o,
    RegDst_i,
    ALUOp_i,
    ALUSrc_i,
@@ -66,10 +64,6 @@ output MemToReg_o;
 reg MemToReg_or=0;
 output MemWrite_o;
 reg MemWrite_or=0;
-output IsBranch_o;
-reg IsBranch_or=0;
-output  IsJump_o;
-reg IsJump_or=0;
 
 
 assign RegDst_o = RegDst_or;
@@ -78,8 +72,6 @@ assign ALUSrc_o = ALUSrc_or;
 assign RegWrite_o = RegWrite_or;
 assign MemToReg_o = MemToReg_or;
 assign MemWrite_o = MemWrite_or;
-assign IsBranch_o = IsBranch_or;
-assign IsJump_o = IsJump_or;
 
 
 always@(posedge clk_i) begin
@@ -95,8 +87,6 @@ always@(posedge clk_i) begin
    RegWrite_or <= RegWrite_i;
    MemToReg_or <= MemToReg_i;
    MemWrite_or <= MemWrite_i;
-   IsBranch_or <= IsBranch_i;
-   IsJump_or <= IsJump_i;
 end
 
 endmodule

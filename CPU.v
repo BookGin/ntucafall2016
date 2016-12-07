@@ -112,16 +112,12 @@ ID_EX ID_EX(
   .RegWrite_i(Control.RegWrite_o),
   .MemToReg_i(Control.MemToReg_o),
   .MemWrite_i(Control.MemWrite_o),
-  .IsBranch_i(Control.IsBranch_o),
-  .IsJump_i(Control.IsJump_o),
   .RegDst_o(),
   .ALUOp_o(),
   .ALUSrc_o(),
   .RegWrite_o(),
   .MemToReg_o(),
   .MemWrite_o(),
-  .IsBranch_o(),
-  .IsJump_o()
 );
 
 EX_MEM EX_MEM(
