@@ -117,7 +117,7 @@ ID_EX ID_EX(
   .ALUSrc_o(),
   .RegWrite_o(),
   .MemToReg_o(),
-  .MemWrite_o(),
+  .MemWrite_o()
 );
 
 EX_MEM EX_MEM(
@@ -134,13 +134,9 @@ EX_MEM EX_MEM(
   .RegWrite_o(),
   .MemToReg_o(),
   .MemWrite_o(),
-  .IsBranch_o(),
-  .IsJump_o(),
   .RegWrite_i(ID_EX.RegWrite_o),
   .MemToReg_i(ID_EX.MemToReg_o),
-  .MemWrite_i(ID_EX.MemWrite_o),
-  .IsBranch_i(ID_EX.IsBranch_o),
-  .IsJump_i(ID_EX.IsJump_o)
+  .MemWrite_i(ID_EX.MemWrite_o)
 );
 
 MEM_WB MEM_WB(

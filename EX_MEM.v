@@ -13,13 +13,9 @@ module EX_MEM
    RegWrite_o,
    MemToReg_o,
    MemWrite_o,
-   IsBranch_o,
-   IsJump_o,
    RegWrite_i,
    MemToReg_i,
-   MemWrite_i,
-   IsBranch_i,
-   IsJump_i
+   MemWrite_i
    );
 
    input clk_i, zero_i;
@@ -37,8 +33,6 @@ module EX_MEM
 input 		       RegWrite_i;
 input 		       MemToReg_i;
 input 		       MemWrite_i;
-input 		       IsBranch_i;
-input 		       IsJump_i;
 
 output RegWrite_o;
 reg RegWrite_or=0;
@@ -46,16 +40,10 @@ output MemToReg_o;
 reg MemToReg_or=0;
 output MemWrite_o;
 reg MemWrite_or=0;
-output IsBranch_o;
-reg IsBranch_or=0;
-output  IsJump_o;
-reg IsJump_or=0;
 
 assign RegWrite_o = RegWrite_or;
 assign MemToReg_o = MemToReg_or;
 assign MemWrite_o = MemWrite_or;
-assign IsBranch_o = IsBranch_or;
-assign IsJump_o = IsJump_or;
 
 always@(posedge clk_i) begin
    ALUResult_or <= ALUResult_i;
@@ -67,8 +55,6 @@ always@(posedge clk_i) begin
   RegWrite_or <= RegWrite_i;
   MemToReg_or <= MemToReg_i;
   MemWrite_or <= MemWrite_i;
-  IsBranch_or <= IsBranch_i;
-  IsJump_or <= IsJump_i;
 end
 
 endmodule

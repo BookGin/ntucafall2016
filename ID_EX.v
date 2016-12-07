@@ -23,10 +23,7 @@ module ID_EX
    ALUSrc_i,
    RegWrite_i,
    MemToReg_i,
-   MemWrite_i,
-   IsBranch_i,
-   IsJump_i
-
+   MemWrite_i
    );
 
    input clk_i;
