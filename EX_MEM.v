@@ -4,10 +4,11 @@ module EX_MEM
    pc_i,
    zero_i,
    ALUResult_i,
+   RDData_i,
    pc_o,
    zero_o,
    ALUResult_o,
-
+   RDData_o,
 //control
    RegWrite_o,
    MemToReg_o,
@@ -18,19 +19,20 @@ module EX_MEM
    MemToReg_i,
    MemWrite_i,
    IsBranch_i,
-   IsJump_o
+   IsJump_i
    );
 
    input clk_i, zero_i;
-   input [31:0] 	       pc_i, ALUResult_i, SignExtended_i;
-   output [31:0] 	       pc_o, ALUResult_o, SignExtended_o;
-   output reg [31:0] 	       pc_or=0, ALUResult_or=0, SignExtended_or=0;
+   input [31:0] 	       pc_i, ALUResult_i, SignExtended_i, RDData_i;
+   output [31:0] 	       pc_o, ALUResult_o, SignExtended_o, RDData_o;
+   output reg [31:0] 	       pc_or=0, ALUResult_or=0, SignExtended_or=0, RDData_or=0;
    output zero_o;
    reg zero_or=0;
    assign zero_o = zero_or;
    assign pc_o = pc_or;
    assign ALUResult_o = ALUResult_or;
    assign SignExtended_o =SignExtended_or;
+   assign RDData_o = RDData_or;
 // Control
 input 		       RegWrite_i;
 input 		       MemToReg_i;
@@ -60,7 +62,7 @@ always@(posedge clk_i) begin
    SignExtended_or <= SignExtended_i;
    pc_or <= pc_i;
    zero_or <= zero_i;
-
+   RDData_or <= RDData_i;
 //control
   RegWrite_or <= RegWrite_i;
   MemToReg_or <= MemToReg_i;
