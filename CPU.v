@@ -129,7 +129,7 @@ EX_MEM EX_MEM(
   .pc_o(),
   .zero_o(),
   .ALUResult_o(),
-
+  .RDData_o(),
   //control
   .RegWrite_o(),
   .MemToReg_o(),
@@ -142,7 +142,7 @@ EX_MEM EX_MEM(
 MEM_WB MEM_WB(
   .clk_i(clk_i),
   .RDData_i(Data_Memory.RDdata_o),
-  .ALUResult_i(ALU.data_o),
+  .ALUResult_i(EX_MEM.ALUResult_o),
   .RDData_o(),
   .ALUResult_o(),
 
@@ -199,7 +199,7 @@ ALU_Control ALU_Control(
 );
 
 MUX32 MUX_MemDst(
-    .data0_i    (ALU.data_o),
+    .data0_i    (MEM_WB.ALUResult_o),
     .data1_i    (MEM_WB.RDData_o),
     .select_i   (MEM_WB.MemToReg_o),
     .data_o     ()
@@ -207,7 +207,7 @@ MUX32 MUX_MemDst(
 
 Memory Data_Memory(
   .clk_i(clk_i),
-  .RDaddr_i(ALU.data_o),
+  .RDaddr_i(EX_MEM.ALUResult_o),
   .RDdata_i(EX_MEM.RDData_o),
   .MemWrite_i(EX_MEM.MemWrite_o),
   .MemRead_i(),
