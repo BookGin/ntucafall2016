@@ -3,6 +3,8 @@ module MEM_WB
    clk_i,
    RDData_i,
    ALUResult_i,
+   RDaddr_i,
+   RDaddr_o,
    RDData_o,
    ALUResult_o,
 
@@ -12,6 +14,9 @@ module MEM_WB
    RegWrite_i,
    MemToReg_i
    );
+
+   input [4:0] RDaddr_i;
+   output reg [4:0] RDaddr_o = 0;
 
    input clk_i;
    input [31:0]            ALUResult_i, RDData_i;
@@ -34,7 +39,7 @@ module MEM_WB
 always@(posedge clk_i) begin
    RDData_or <= RDData_i;
    ALUResult_or <= ALUResult_i;
-
+   RDaddr_o <= RDaddr_i;
 //control
    RegWrite_or <= RegWrite_i;
    MemToReg_or <= MemToReg_i;
