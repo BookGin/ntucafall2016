@@ -29,9 +29,6 @@ always@(posedge clk_i) begin
         memory[RDaddr_i+1] <= RDdata_i[15:8];
         memory[RDaddr_i] <= RDdata_i[7:0];
     end
-    if(MemRead_i) begin
-
-    end
 end
 
 endmodule
