@@ -21,7 +21,7 @@ module MEM_WB
    input clk_i;
    input [31:0]            ALUResult_i, RDData_i;
    output [31:0] 	   ALUResult_o, RDData_o;
-   reg [31:0] 	   ALUResult_or, RDData_or;
+   reg [31:0] 	   ALUResult_or = 0, RDData_or = 0;
    assign ALUResult_o = ALUResult_or;
    assign RDData_o =RDData_or;
 // Control
