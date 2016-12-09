@@ -29,7 +29,7 @@ module ID_EX
    input clk_i;
    input [31:0] inst_i, pc_i, RDData0_i, RDData1_i, SignExtended_i;
    output [31:0] inst_o, pc_o, RDData0_o, RDData1_o, SignExtended_o;
-   reg [31:0] 	 inst_or=0, pc_or=0, RDData0_or=0, RDData1_or=0, SignExtended_or=0;
+   reg [31:0] 	 inst_or= 32'd0, pc_or=32'd0, RDData0_or=32'd0, RDData1_or=32'd0, SignExtended_or=32'd0;
 
    assign inst_o =inst_or;
    assign pc_o = pc_or;

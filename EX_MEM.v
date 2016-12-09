@@ -21,12 +21,12 @@ module EX_MEM
    );
 
    input [4:0] RDaddr_i;
-   output reg [4:0] RDaddr_o = 0;
+   output reg [4:0] RDaddr_o = 5'd0;
 
    input 	    clk_i, zero_i;
    input [31:0]     pc_i, ALUResult_i, SignExtended_i, RDData_i;
    output [31:0]    pc_o, ALUResult_o, SignExtended_o, RDData_o;
-   output reg [31:0] pc_or=0, ALUResult_or=0, SignExtended_or=0, RDData_or=0;
+   output reg [31:0] pc_or=32'd0, ALUResult_or=32'd0, SignExtended_or=32'd0, RDData_or=32'd0;
    output 	     zero_o;
    reg 		     zero_or=0;
    assign zero_o = zero_or;

@@ -16,12 +16,12 @@ module MEM_WB
    );
 
    input [4:0] RDaddr_i;
-   output reg [4:0] RDaddr_o = 0;
+   output reg [4:0] RDaddr_o = 5'd0;
 
    input 	    clk_i;
    input [31:0]     ALUResult_i, RDData_i;
    output [31:0]    ALUResult_o, RDData_o;
-   reg [31:0] 	    ALUResult_or = 0, RDData_or = 0;
+   reg [31:0] 	    ALUResult_or = 32'd0, RDData_or = 32'd0;
    assign ALUResult_o = ALUResult_or;
    assign RDData_o =RDData_or;
    // Control
