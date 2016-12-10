@@ -4,7 +4,6 @@ module Memory
     RDaddr_i,
     RDdata_i,
     MemWrite_i,
-    MemRead_i,
     RDdata_o
 );
 
@@ -13,7 +12,6 @@ input               clk_i;
 input   [31:0]       RDaddr_i;
 input   [31:0]      RDdata_i;
 input               MemWrite_i;
-input               MemRead_i;
 output   [31:0]      RDdata_o;
 
 // Register File

@@ -213,7 +213,6 @@ Memory Data_Memory (
   .RDaddr_i(EX_MEM.ALUResult_o),
   .RDdata_i(EX_MEM.RDData_o),
   .MemWrite_i(EX_MEM.MemWrite_o),
-  .MemRead_i(),
   .RDdata_o()
 );
 
