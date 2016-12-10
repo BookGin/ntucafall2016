@@ -1,4 +1,4 @@
-module HD(
+module HazzardDetection(
     input ID_EX_MemRead,
     input [4:0] IF_ID_RegisterRs,
     input [4:0] IF_ID_RegisterRt,
