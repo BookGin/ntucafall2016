@@ -1,5 +1,3 @@
-**Note that in all tests, MUL function filed = 011000.**
-
 You can compare output with `./correct_output.txt` by `diff` or `vimdiff`.
 If there is `no compare.txt`, please check correctness manually.
 
