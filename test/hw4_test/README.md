@@ -1,3 +1,5 @@
+**Note that in this test, MUL function filed = 011000.**
+
 Test for those instructions:
 - and 
 - or 
