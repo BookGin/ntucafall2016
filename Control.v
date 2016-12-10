@@ -7,7 +7,7 @@ module Control (
   output MemToReg_o,
   output MemWrite_o,
   output IsBranch_o,
-  output IsJump_o 
+  output IsJump_o
 );
 
 parameter R_TYPE = 6'b000000; // add, sub, mul, and, or
@@ -28,7 +28,7 @@ assign IsJump_o = (Op_i == JMP);
 
 assign ALUOp_o = (
   (Op_i == ADDI || Op_i == LW || Op_i == SW) ? ALU_Control.ADD :
-  (Op_i == BEQ) ? ALU_Control.SUB : 
+  (Op_i == BEQ) ? ALU_Control.SUB :
   ALU_Control.R_TYPE
 );
 
