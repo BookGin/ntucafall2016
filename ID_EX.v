@@ -17,12 +17,14 @@ module ID_EX
    input 	     ALUSrc_i,
    input 	     RegWrite_i,
    input 	     MemToReg_i,
+   input 	     MemRead_i,
    input 	     MemWrite_i,
    output 	     RegDst_o,
    output [1:0]      ALUOp_o,
    output 	     ALUSrc_o,
    output 	     RegWrite_o,
    output 	     MemToReg_o,
+   output 	     MemRead_o,
    output 	     MemWrite_o
    );
 
@@ -32,6 +34,7 @@ module ID_EX
    reg 		 ALUSrc_or=0;
    reg 		 RegWrite_or=0;
    reg 		 MemToReg_or=0;
+   reg 		 MemRead_or=0;
    reg 		 MemWrite_or=0;
 
    assign RegDst_o = RegDst_or;
@@ -39,6 +42,7 @@ module ID_EX
    assign ALUSrc_o = ALUSrc_or;
    assign RegWrite_o = RegWrite_or;
    assign MemToReg_o = MemToReg_or;
+   assign MemRead_o = MemRead_or;
    assign MemWrite_o = MemWrite_or;
 
 
@@ -55,6 +59,7 @@ module ID_EX
       ALUSrc_or <= ALUSrc_i;
       RegWrite_or <= RegWrite_i;
       MemToReg_or <= MemToReg_i;
+      MemRead_or <= MemRead_i;
       MemWrite_or <= MemWrite_i;
    end
 
