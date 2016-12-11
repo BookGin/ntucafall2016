@@ -2,6 +2,8 @@ module IF_ID (
   input clk_i,
   input [31:0] inst_i,
   input [31:0] pc_i,
+  input hazard_in,
+  input flush,
   output reg [31:0] inst_o = 32'd0,
   output reg [31:0] pc_o = 32'd0
 );
@@ -9,6 +11,11 @@ module IF_ID (
 always @(posedge clk_i) begin
   inst_o <= inst_i;
   pc_o <= pc_i;
+  inst_o <= (
+  	(flush)? 32'b0 : // flush
+  	(hazard_in)? inst_o : // stall
+  	inst_i
+  );
 end
 
 endmodule

@@ -2,6 +2,8 @@
 `include "Control.v"
 `include "Adder.v"
 `include "MUX5.v"
+`include "MUX_Forward.v" // for mux 6, 7
+`include "MUX8.v" // for mux 8
 `include "MUX32.v"
 `include "PC.v"
 `include "Registers.v"
@@ -17,6 +19,10 @@
 `include "EX_MEM.v"
 `include "MEM_WB.v"
 
+// Forwarding Unit & Hazzard Detection Unit
+`include "ForwardingUnit.v"
+`include "HazzardDetection.v"
+
 module CPU (
   input clk_i,
   input rst_i,
@@ -26,6 +32,18 @@ module CPU (
 parameter PC_ADVANCE_NUM = 32'd4;
 wire registers_equal = (Registers.RSdata_o == Registers.RTdata_o);
 wire pc_src_branch_select = Control.IsBranch_o & registers_equal;
+
+/* Flush START */
+wire flush;
+
+always @(flush) begin
+  flush = Control.IsJump_o | 
+  (Control.IsBranch_o & 
+    (Registers.RSdata_o == Registers.RTdata_o)
+  );
+end
+
+/* Flush END */
 
 Control Control (
   .Op_i       (IF_ID.inst_o[31:26]),
@@ -78,6 +96,7 @@ PC PC (
   .rst_i      (rst_i),
   .start_i    (start_i),
   .pc_i       (MUX_PCSrc_Jump.data_o),
+  .IsHazzard_i(HD_Unit.PC_Write),
   .pc_o       ()
 );
 
@@ -90,6 +109,8 @@ IF_ID IF_ID (
   .clk_i      (clk_i),
   .inst_i     (Instruction_Memory.instr_o),
   .pc_i       (Add_PCAdvance.data_o),
+  .hazard_in  (HD_Unit.IF_ID_Write),
+  .flush      (flush),
   .inst_o     (),
   .pc_o       ()
 );
@@ -214,6 +235,49 @@ Memory Data_Memory (
   .RDdata_i(EX_MEM.RDData_o),
   .MemWrite_i(EX_MEM.MemWrite_o),
   .RDdata_o()
+);
+
+Forwarding FW_Unit (
+  .EX_MEM_RegWrite(), // EX_MEM.WB_out[0]
+  .MEM_WB_RegWrite(MEM_WB.RegWrite_o),
+  .EX_MEM_RegisterRd(), // EX_MEM.instruction_mux_out
+  .MEM_WB_RegisterRd(), // MEM_WB.instruction_mux_out
+  .ID_EX_RegisterRs(), // ID_EX.Inst_25_to_21_out
+  .ID_EX_RegisterRt(), // ID_EX.Inst_20_to_16_out
+  .ForwardA(),
+  .ForwardB()
+);
+
+HazzardDetection HD_Unit (
+  .ID_EX_MemRead(), //ID_EX.M_out[0]
+  .IF_ID_RegisterRs(IF_ID.inst_o[25:21]), 
+  .IF_ID_RegisterRt(IF_ID.inst_o[20:16]),
+  .ID_EX_RegisterRt(), // ID_EX.Inst_20_to_16_out
+  .PC_Write(),
+  .IF_ID_Write(),
+  .data_o()
+);
+
+MUX_Forward MUX6 (
+  .data0_i(), // ID_EX.RDdata1_out
+  .data1_i(MUX_RegDst.data_o), // from mux5 REG's result
+  .data2_i(EX_MEM.ALUResult_o), // from EX's result 
+  .IsForward_i(FW_Unit.ForwardA),
+  .data_o()
+);
+
+MUX_Forward MUX7 (
+  .data0_i(), // ID_EX.RDdata2_out
+  .data1_i(MUX_RegDst.data_o), // from mux5 REG's result
+  .data2_i(EX_MEM.ALUResult_o), // from EX's result 
+  .IsForward_i(FW_Unit.ForwardB),
+  .data_o()
+);
+
+MUX8 MUX8 (
+  .data_i(), // Control.Control_o
+  .IsHazzard_i(HD_Unit.data_o),
+  .data_o()
 );
 
 endmodule
