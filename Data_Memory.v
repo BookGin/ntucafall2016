@@ -3,6 +3,7 @@ module Memory
     clk_i,
     RDaddr_i,
     RDdata_i,
+    MemRead_i,
     MemWrite_i,
     RDdata_o
 );
@@ -11,6 +12,7 @@ module Memory
 input               clk_i;
 input   [31:0]       RDaddr_i;
 input   [31:0]      RDdata_i;
+input               MemRead_i;
 input               MemWrite_i;
 output   [31:0]      RDdata_o;
 

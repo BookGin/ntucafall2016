@@ -44,6 +44,9 @@ Control Control (
   .ALUOp_o    (),
   .ALUSrc_o   (),
   .RegWrite_o (),
+  .MemToReg_o (),
+  .MemRead_o  (),
+  .MemWrite_o (),
   .IsBranch_o (),
   .IsJump_o   ()
 );
@@ -130,12 +133,14 @@ ID_EX ID_EX (
   .ALUSrc_i   (MUX8.ALUSrc_o),
   .RegWrite_i (MUX8.RegWrite_o),
   .MemToReg_i (MUX8.MemToReg_o),
+  .MemRead_i  (MUX8.MemRead_o),
   .MemWrite_i (MUX8.MemWrite_o),
   .RegDst_o   (),
   .ALUOp_o    (),
   .ALUSrc_o   (),
   .RegWrite_o (),
   .MemToReg_o (),
+  .MemRead_o  (),
   .MemWrite_o ()
 );
 
@@ -154,9 +159,11 @@ EX_MEM EX_MEM (
   //control
   .RegWrite_o (),
   .MemToReg_o (),
+  .MemRead_o  (),
   .MemWrite_o (),
   .RegWrite_i (ID_EX.RegWrite_o),
   .MemToReg_i (ID_EX.MemToReg_o),
+  .MemRead_i  (ID_EX.MemRead_o),
   .MemWrite_i (ID_EX.MemWrite_o)
 );
 
@@ -231,6 +238,7 @@ Memory Data_Memory (
   .clk_i      (clk_i),
   .RDaddr_i   (EX_MEM.ALUResult_o),
   .RDdata_i   (EX_MEM.RDData_o),
+  .MemRead_i  (EX_MEM.MemRead_o),
   .MemWrite_i (EX_MEM.MemWrite_o),
   .RDdata_o   ()
 );
