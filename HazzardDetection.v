@@ -1,5 +1,5 @@
 module HazzardDetection (
-    input ID_EX_MemRead,
+    input ID_EX_MemRead_i,
     input [4:0] IF_ID_RegisterRs,
     input [4:0] IF_ID_RegisterRt,
     input [4:0] ID_EX_RegisterRt,
