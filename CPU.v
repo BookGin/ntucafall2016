@@ -35,14 +35,7 @@ wire pc_src_branch_select = Control.IsBranch_o & registers_equal;
 
 /* Flush START */
 wire flush;
-
-always @(flush) begin
-  flush = Control.IsJump_o | 
-  (Control.IsBranch_o & 
-    (Registers.RSdata_o == Registers.RTdata_o)
-  );
-end
-
+assign flush = Control.IsJump_o | pc_src_branch_select;
 /* Flush END */
 
 Control Control (
@@ -110,7 +103,12 @@ IF_ID IF_ID (
   .inst_i     (Instruction_Memory.instr_o),
   .pc_i       (Add_PCAdvance.data_o),
   .hazard_in  (HD_Unit.IF_ID_Write),
-  .flush      (flush),
+  .flush      (
+    Control.IsJump_o |
+    (Control.IsBranch_o & 
+      (Registers.RSdata_o == Registers.RTdata_o)
+    )
+  ),
   .inst_o     (),
   .pc_o       ()
 );
@@ -242,8 +240,8 @@ Forwarding FW_Unit (
   .MEM_WB_RegWrite(MEM_WB.RegWrite_o),
   .EX_MEM_RegisterRd(), // EX_MEM.instruction_mux_out
   .MEM_WB_RegisterRd(), // MEM_WB.instruction_mux_out
-  .ID_EX_RegisterRs(), // ID_EX.Inst_25_to_21_out
-  .ID_EX_RegisterRt(), // ID_EX.Inst_20_to_16_out
+  .ID_EX_RegisterRs(ID_EX.inst_o[25:21]), // ID_EX.Inst_25_to_21_out
+  .ID_EX_RegisterRt(ID_EX.inst_o[20:16]), // ID_EX.Inst_20_to_16_out
   .ForwardA(),
   .ForwardB()
 );
@@ -252,14 +250,14 @@ HazzardDetection HD_Unit (
   .ID_EX_MemRead(), //ID_EX.M_out[0]
   .IF_ID_RegisterRs(IF_ID.inst_o[25:21]), 
   .IF_ID_RegisterRt(IF_ID.inst_o[20:16]),
-  .ID_EX_RegisterRt(), // ID_EX.Inst_20_to_16_out
+  .ID_EX_RegisterRt(ID_EX.inst_o[20:16]), // ID_EX.Inst_20_to_16_out
   .PC_Write(),
   .IF_ID_Write(),
   .data_o()
 );
 
 MUX_Forward MUX6 (
-  .data0_i(), // ID_EX.RDdata1_out
+  .data0_i(ID_EX.RDData0_o), // ID_EX.RDdata1_out
   .data1_i(MUX_RegDst.data_o), // from mux5 REG's result
   .data2_i(EX_MEM.ALUResult_o), // from EX's result 
   .IsForward_i(FW_Unit.ForwardA),
@@ -267,7 +265,7 @@ MUX_Forward MUX6 (
 );
 
 MUX_Forward MUX7 (
-  .data0_i(), // ID_EX.RDdata2_out
+  .data0_i(ID_EX.RDData1_o), // ID_EX.RDdata2_out
   .data1_i(MUX_RegDst.data_o), // from mux5 REG's result
   .data2_i(EX_MEM.ALUResult_o), // from EX's result 
   .IsForward_i(FW_Unit.ForwardB),
