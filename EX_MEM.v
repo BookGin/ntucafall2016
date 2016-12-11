@@ -1,49 +1,28 @@
 module EX_MEM
   (
-   clk_i,
-   pc_i,
-   zero_i,
-   ALUResult_i,
-   RDData_i,
-   RDaddr_i,
-   RDaddr_o,
-   pc_o,
-   zero_o,
-   ALUResult_o,
-   RDData_o,
+   input 	     clk_i,
+   input [31:0]      pc_i,
+   input 	     zero_i,
+   input [31:0]      ALUResult_i,
+   input [31:0]      RDData_i,
+   input [4:0] 	     RDaddr_i,
+   output reg 	     pc_o,
+   output reg 	     zero_o,
+   output reg [31:0] ALUResult_o = 32'd0,
+   output reg [31:0] RDData_o = 32'd0,
+   output reg [4:0]  RDaddr_o = 5'd0,
+   
    //control
-   RegWrite_o,
-   MemToReg_o,
-   MemWrite_o,
-   RegWrite_i,
-   MemToReg_i,
-   MemWrite_i
+   input 	     RegWrite_i,
+   input 	     MemToReg_i,
+   input 	     MemWrite_i,
+   output 	     RegWrite_o,
+   output 	     MemToReg_o,
+   output 	     MemWrite_o
    );
 
-   input [4:0] RDaddr_i;
-   output reg [4:0] RDaddr_o = 5'd0;
-
-   input 	    clk_i, zero_i;
-   input [31:0]     pc_i, ALUResult_i, SignExtended_i, RDData_i;
-   output [31:0]    pc_o, ALUResult_o, SignExtended_o, RDData_o;
-   output reg [31:0] pc_or=32'd0, ALUResult_or=32'd0, SignExtended_or=32'd0, RDData_or=32'd0;
-   output 	     zero_o;
-   reg 		     zero_or=0;
-   assign zero_o = zero_or;
-   assign pc_o = pc_or;
-   assign ALUResult_o = ALUResult_or;
-   assign SignExtended_o =SignExtended_or;
-   assign RDData_o = RDData_or;
-   // Control
-   input 	     RegWrite_i;
-   input 	     MemToReg_i;
-   input 	     MemWrite_i;
-
-   output 	     RegWrite_o;
    reg 		     RegWrite_or=0;
-   output 	     MemToReg_o;
    reg 		     MemToReg_or=0;
-   output 	     MemWrite_o;
    reg 		     MemWrite_or=0;
 
    assign RegWrite_o = RegWrite_or;
@@ -51,12 +30,11 @@ module EX_MEM
    assign MemWrite_o = MemWrite_or;
 
    always@(posedge clk_i) begin
-      ALUResult_or <= ALUResult_i;
-      SignExtended_or <= SignExtended_i;
-      pc_or <= pc_i;
-      zero_or <= zero_i;
-      RDData_or <= RDData_i;
+      pc_o <= pc_i;
+      zero_o <= zero_i;
       RDaddr_o <= RDaddr_i;
+      ALUResult_o <= ALUResult_i;
+      RDData_o <= RDData_i;
       //control
       RegWrite_or <= RegWrite_i;
       MemToReg_or <= MemToReg_i;
