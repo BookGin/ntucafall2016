@@ -293,10 +293,10 @@ MUX8 MUX8 (
 
   .RegDst_i     (Control.RegDst_o),
   .ALUOp_i      (Control.ALUOp_o),
-  .ALUSrc_i     (Control.ALUSrc_i),
+  .ALUSrc_i     (Control.ALUSrc_o),
   .RegWrite_i   (Control.RegWrite_o),
   .MemToReg_i   (Control.MemToReg_o),
-  .MemRead_i    (Control.MemRead_i),
+  .MemRead_i    (Control.MemRead_o),
   .MemWrite_i   (Control.MemWrite_o),
 
   .RegDst_o     (),
