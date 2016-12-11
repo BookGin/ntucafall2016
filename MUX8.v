@@ -5,7 +5,8 @@ module MUX8 (
 	input ALUOp_i, // EX
 	input ALUSrc_i, // EX
 	input RegWrite_i, // WB
-	input MemToReg_i, // WB	
+	input MemToReg_i, // WB
+	input MemRead_i, // M
 	input MemWrite_i, // M
 
 	output RegDst_o,
@@ -21,6 +22,7 @@ assign ALUOp_o    = (IsHazzard_i)? 1'b0 : ALUOp_i;
 assign ALUSrc_o   = (IsHazzard_i)? 1'b0 : ALUSrc_i;
 assign RegWrite_o = (IsHazzard_i)? 1'b0 : RegWrite_i;
 assign MemToReg_o = (IsHazzard_i)? 1'b0 : MemToReg_i;
+assign MemRead_o  = (IsHazzard_i)? 1'b0 : MemRead_i;
 assign MemWrite_o = (IsHazzard_i)? 1'b0 : MemWrite_i;
 
 endmodule

@@ -236,13 +236,13 @@ Memory Data_Memory (
 );
 
 Forwarding FW_Unit (
-  .ID_EX_RegisterRs   (ID_EX.inst_o[25:21]), // ID_EX.Inst_25_to_21_out
-  .ID_EX_RegisterRt   (ID_EX.inst_o[20:16]), // ID_EX.Inst_20_to_16_out
-  .EX_MEM_RegisterRd  (EX_MEM.RDaddr_o), // EX_MEM.instruction_mux_out // mux3.data_o
-  .MEM_WB_RegisterRd  (MEM_WB.RDaddr_o), // MEM_WB.instruction_mux_out // mux3.data_o
+  .ID_EX_RegisterRs   (ID_EX.inst_o[25:21]),
+  .ID_EX_RegisterRt   (ID_EX.inst_o[20:16]), 
+  .EX_MEM_RegisterRd  (EX_MEM.RDaddr_o), // mux3.data_o
+  .MEM_WB_RegisterRd  (MEM_WB.RDaddr_o), // mux3.data_o
   
   // control 
-  .EX_MEM_RegWrite    (EX_MEM.RegWrite_o), // EX_MEM.WB_out[0]
+  .EX_MEM_RegWrite    (EX_MEM.RegWrite_o),
   .MEM_WB_RegWrite    (MEM_WB.RegWrite_o),
   .ForwardA           (),
   .ForwardB           ()
@@ -251,10 +251,10 @@ Forwarding FW_Unit (
 HazzardDetection HD_Unit (
   .IF_ID_RegisterRs (IF_ID.inst_o[25:21]), 
   .IF_ID_RegisterRt (IF_ID.inst_o[20:16]),
-  .ID_EX_RegisterRt (ID_EX.inst_o[20:16]), // ID_EX.Inst_20_to_16_out
+  .ID_EX_RegisterRt (ID_EX.inst_o[20:16]),
 
   // control
-  .ID_EX_MemRead_i    (), //ID_EX.M_out[0] => ID_EX.MemRead_o
+  .ID_EX_MemRead_i  (ID_EX.MemRead_o), // ID_EX.MemRead_o
   .PC_Write         (),
   .IF_ID_Write      (),
   .data_o           () // for mux 8
@@ -288,6 +288,7 @@ MUX8 MUX8 (
   .ALUSrc_i     (Control.ALUSrc_i),
   .RegWrite_i   (Control.RegWrite_o),
   .MemToReg_i   (Control.MemToReg_o),
+  .MemRead_i    (Control.MemRead_i),
   .MemWrite_i   (Control.MemWrite_o),
 
   .RegDst_o     (),
@@ -295,7 +296,8 @@ MUX8 MUX8 (
   .ALUSrc_o     (),
   .RegWrite_o   (),
   .MemToReg_o   (),
-  .MemWrite_o   (),  
+  .MemRead_o    (),
+  .MemWrite_o   ()
 );
 
 endmodule
