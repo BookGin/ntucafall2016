@@ -1,4 +1,4 @@
-module HazzardDetection(
+module HazzardDetection (
     input ID_EX_MemRead,
     input [4:0] IF_ID_RegisterRs,
     input [4:0] IF_ID_RegisterRt,
@@ -16,7 +16,7 @@ always @(*) begin
      (ID_EX_RegisterRt == IF_ID_RegisterRs || 
       ID_EX_RegisterRt == IF_ID_RegisterRt))
     begin 
-      data_o = 1'b1;
+      data_o      = 1'b1;
       PC_Write    = 1'b1;
       IF_ID_Write = 1'b1;
     end
