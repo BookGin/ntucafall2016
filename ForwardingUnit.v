@@ -1,4 +1,4 @@
-module FW 
+module Forwarding 
 (
   input EX_MEM_RegWrite,
   input MEM_WB_RegWrite,
