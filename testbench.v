@@ -6,6 +6,7 @@ reg                Clk;
 reg                Reset;
 reg                Start;
 integer            i, outfile, counter;
+integer            stall, flush;
 
 always #(`CYCLE_TIME/2) Clk = ~Clk;
 
@@ -19,6 +20,8 @@ initial begin
     $dumpfile("test.vcd");
     $dumpvars;
     counter = 0;
+    stall = 0;
+    flush = 0;
 
     // initialize instruction memory
     for(i=0; i<256; i=i+1) begin
@@ -55,7 +58,13 @@ always@(posedge Clk) begin
     if(counter == 30)    // stop after 30 cycles
         $stop;
 
+    if (CPU.HD_Unit.data_o == 1 && CPU.Control.IsJump_o == 0 && CPU.Control.Branch_o == 0)
+        stall = stall + 1;
+    if (CPU.flush == 1)
+        flush = flush + 1;
+
     // print PC
+    $fdisplay(outfile, "cycle = %d, Start = %d, Stall = %d, Flush = %d\n", counter, Start, stall, flush);
     $fdisplay(outfile, "PC = %d", CPU.PC.pc_o);
 
     // print Registers
