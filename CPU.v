@@ -125,12 +125,12 @@ ID_EX ID_EX (
   .SignExtended_o(),
 
   //control
-  .RegDst_i(Control.RegDst_o),
-  .ALUOp_i(Control.ALUOp_o),
-  .ALUSrc_i(Control.ALUSrc_o),
-  .RegWrite_i(Control.RegWrite_o),
-  .MemToReg_i(Control.MemToReg_o),
-  .MemWrite_i(Control.MemWrite_o),
+  .RegDst_i(MUX8.RegDst_o),
+  .ALUOp_i(MUX8.ALUOp_o),
+  .ALUSrc_i(MUX8.ALUSrc_o),
+  .RegWrite_i(MUX8.RegWrite_o),
+  .MemToReg_i(MUX8.MemToReg_o),
+  .MemWrite_i(MUX8.MemWrite_o),
   .RegDst_o(),
   .ALUOp_o(),
   .ALUSrc_o(),
@@ -195,7 +195,7 @@ MUX5 MUX_RegDst (
 );
 
 MUX32 MUX_ALUSrc (
-  .data0_i    (ID_EX.RDData1_o),
+  .data0_i    (MUX7.data_o),
   .data1_i    (ID_EX.SignExtended_o),
   .select_i   (ID_EX.ALUSrc_o),
   .data_o     ()
@@ -207,7 +207,7 @@ Sign_Extend Sign_Extend (
 );
 
 ALU ALU (
-  .data0_i    (ID_EX.RDData0_o),
+  .data0_i    (MUX6.data_o),
   .data1_i    (MUX_ALUSrc.data_o),
   .ALUCtrl_i  (ALU_Control.ALUCtrl_o),
   .data_o     (),
@@ -254,14 +254,14 @@ HazzardDetection HD_Unit (
   .ID_EX_RegisterRt (ID_EX.inst_o[20:16]), // ID_EX.Inst_20_to_16_out
 
   // control
-  .ID_EX_MemRead    (ID_EX.MemWrite_o), //ID_EX.M_out[0]
+  .ID_EX_MemRead_i    (), //ID_EX.M_out[0] => ID_EX.MemRead_o
   .PC_Write         (),
   .IF_ID_Write      (),
-  .data_o           ()
+  .data_o           () // for mux 8
 );
 
 MUX_Forward MUX6 (
-  .data0_i      (ID_EX.RDData0_o), // ID_EX.RDdata1_out
+  .data0_i      (ID_EX.RDData0_o), // ID_EX.RDdata0_out
   .data1_i      (MUX_RegDst.data_o), // from mux5 REG's result
   .data2_i      (EX_MEM.ALUResult_o), // from EX's result 
   .data_o       (),
@@ -271,7 +271,7 @@ MUX_Forward MUX6 (
 );
 
 MUX_Forward MUX7 (
-  .data0_i      (ID_EX.RDData1_o), // ID_EX.RDdata2_out
+  .data0_i      (ID_EX.RDData1_o), // ID_EX.RDdata1_out
   .data1_i      (MUX_RegDst.data_o), // from mux5 REG's result
   .data2_i      (EX_MEM.ALUResult_o), // from EX's result 
   .data_o       (),
@@ -282,38 +282,20 @@ MUX_Forward MUX7 (
 
 MUX8 MUX8 (
   .IsHazzard_i  (HD_Unit.data_o),
-  .data_o       (),
 
-  // controll
   .RegDst_i     (Control.RegDst_o),
   .ALUOp_i      (Control.ALUOp_o),
   .ALUSrc_i     (Control.ALUSrc_i),
   .RegWrite_i   (Control.RegWrite_o),
+  .MemToReg_i   (Control.MemToReg_o),
+  .MemWrite_i   (Control.MemWrite_o),
 
-  /* INPUT
-  .Op_i       (IF_ID.inst_o[31:26]),
-  .RegDst_o   (),
-  .ALUOp_o    (),
-  .ALUSrc_o   (),
-  .RegWrite_o (),
-  .IsBranch_o (),
-  .IsJump_o ()
-  */
-  /* OUTPUT
-  .RegDst_i(Control.RegDst_o),
-  .ALUOp_i(Control.ALUOp_o),
-  .ALUSrc_i(Control.ALUSrc_o),
-  .RegWrite_i(Control.RegWrite_o),
-  .MemToReg_i(Control.MemToReg_o),
-  .MemWrite_i(Control.MemWrite_o),
-  .RegDst_o(),
-  .ALUOp_o(),
-  .ALUSrc_o(),
-  .RegWrite_o(),
-  .MemToReg_o(),
-  .MemWrite_o()
-  */
-  
+  .RegDst_o     (),
+  .ALUOp_o      (),
+  .ALUSrc_o     (),
+  .RegWrite_o   (),
+  .MemToReg_o   (),
+  .MemWrite_o   (),  
 );
 
 endmodule
