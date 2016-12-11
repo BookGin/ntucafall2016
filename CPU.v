@@ -236,46 +236,84 @@ Memory Data_Memory (
 );
 
 Forwarding FW_Unit (
-  .EX_MEM_RegWrite(), // EX_MEM.WB_out[0]
-  .MEM_WB_RegWrite(MEM_WB.RegWrite_o),
-  .EX_MEM_RegisterRd(), // EX_MEM.instruction_mux_out
-  .MEM_WB_RegisterRd(), // MEM_WB.instruction_mux_out
-  .ID_EX_RegisterRs(ID_EX.inst_o[25:21]), // ID_EX.Inst_25_to_21_out
-  .ID_EX_RegisterRt(ID_EX.inst_o[20:16]), // ID_EX.Inst_20_to_16_out
-  .ForwardA(),
-  .ForwardB()
+  .ID_EX_RegisterRs   (ID_EX.inst_o[25:21]), // ID_EX.Inst_25_to_21_out
+  .ID_EX_RegisterRt   (ID_EX.inst_o[20:16]), // ID_EX.Inst_20_to_16_out
+  .EX_MEM_RegisterRd  (EX_MEM.RDaddr_o), // EX_MEM.instruction_mux_out // mux3.data_o
+  .MEM_WB_RegisterRd  (MEM_WB.RDaddr_o), // MEM_WB.instruction_mux_out // mux3.data_o
+  
+  // control 
+  .EX_MEM_RegWrite    (EX_MEM.RegWrite_o), // EX_MEM.WB_out[0]
+  .MEM_WB_RegWrite    (MEM_WB.RegWrite_o),
+  .ForwardA           (),
+  .ForwardB           ()
 );
 
 HazzardDetection HD_Unit (
-  .ID_EX_MemRead(), //ID_EX.M_out[0]
-  .IF_ID_RegisterRs(IF_ID.inst_o[25:21]), 
-  .IF_ID_RegisterRt(IF_ID.inst_o[20:16]),
-  .ID_EX_RegisterRt(ID_EX.inst_o[20:16]), // ID_EX.Inst_20_to_16_out
-  .PC_Write(),
-  .IF_ID_Write(),
-  .data_o()
+  .IF_ID_RegisterRs (IF_ID.inst_o[25:21]), 
+  .IF_ID_RegisterRt (IF_ID.inst_o[20:16]),
+  .ID_EX_RegisterRt (ID_EX.inst_o[20:16]), // ID_EX.Inst_20_to_16_out
+
+  // control
+  .ID_EX_MemRead    (ID_EX.MemWrite_o), //ID_EX.M_out[0]
+  .PC_Write         (),
+  .IF_ID_Write      (),
+  .data_o           ()
 );
 
 MUX_Forward MUX6 (
-  .data0_i(ID_EX.RDData0_o), // ID_EX.RDdata1_out
-  .data1_i(MUX_RegDst.data_o), // from mux5 REG's result
-  .data2_i(EX_MEM.ALUResult_o), // from EX's result 
-  .IsForward_i(FW_Unit.ForwardA),
-  .data_o()
+  .data0_i      (ID_EX.RDData0_o), // ID_EX.RDdata1_out
+  .data1_i      (MUX_RegDst.data_o), // from mux5 REG's result
+  .data2_i      (EX_MEM.ALUResult_o), // from EX's result 
+  .data_o       (),
+
+  // control
+  .IsForward_i  (FW_Unit.ForwardA)
 );
 
 MUX_Forward MUX7 (
-  .data0_i(ID_EX.RDData1_o), // ID_EX.RDdata2_out
-  .data1_i(MUX_RegDst.data_o), // from mux5 REG's result
-  .data2_i(EX_MEM.ALUResult_o), // from EX's result 
-  .IsForward_i(FW_Unit.ForwardB),
-  .data_o()
+  .data0_i      (ID_EX.RDData1_o), // ID_EX.RDdata2_out
+  .data1_i      (MUX_RegDst.data_o), // from mux5 REG's result
+  .data2_i      (EX_MEM.ALUResult_o), // from EX's result 
+  .data_o       (),
+
+  // control
+  .IsForward_i  (FW_Unit.ForwardB)
 );
 
 MUX8 MUX8 (
-  .data_i(), // Control.Control_o
-  .IsHazzard_i(HD_Unit.data_o),
-  .data_o()
+  .IsHazzard_i  (HD_Unit.data_o),
+  .data_o       (),
+
+  // controll
+  .RegDst_i     (Control.RegDst_o),
+  .ALUOp_i      (Control.ALUOp_o),
+  .ALUSrc_i     (Control.ALUSrc_i),
+  .RegWrite_i   (Control.RegWrite_o),
+
+  /* INPUT
+  .Op_i       (IF_ID.inst_o[31:26]),
+  .RegDst_o   (),
+  .ALUOp_o    (),
+  .ALUSrc_o   (),
+  .RegWrite_o (),
+  .IsBranch_o (),
+  .IsJump_o ()
+  */
+  /* OUTPUT
+  .RegDst_i(Control.RegDst_o),
+  .ALUOp_i(Control.ALUOp_o),
+  .ALUSrc_i(Control.ALUSrc_o),
+  .RegWrite_i(Control.RegWrite_o),
+  .MemToReg_i(Control.MemToReg_o),
+  .MemWrite_i(Control.MemWrite_o),
+  .RegDst_o(),
+  .ALUOp_o(),
+  .ALUSrc_o(),
+  .RegWrite_o(),
+  .MemToReg_o(),
+  .MemWrite_o()
+  */
+  
 );
 
 endmodule
