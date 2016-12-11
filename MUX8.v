@@ -4,8 +4,6 @@ module MUX8 (
 	output [7:0] data_o
 );
 
-reg [7:0] data_o;
+assign data_o = (IsHazzard_i)? 7'b0 : data_i;
 
-always @(*) begin
-	data_o = (IsHazzard_i)? 7'b0 : data_i;
-end
+endmodule

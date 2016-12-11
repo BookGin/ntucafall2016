@@ -6,15 +6,11 @@ module MUX_Forward (
 	output [31:0] data_o,
 );
 
-reg [31:0] data_o;
-
-always @(*) begin
-	case (IsForward_i)
-		2'b00: data_o = data0_i;
-		2'b01: data_o = data1_i;
-		2'b10: data_o = data2_i;
-		default: data_o = data0_i;
-	endcase
-end
+assign data_o = (
+	(IsForward_i == 2'b00)? data0_i :
+	(IsForward_i == 2'b01)? data1_i :
+	(IsForward_i == 2'b10)? data2_i :
+	data0_i;
+);
 
 endmodule
