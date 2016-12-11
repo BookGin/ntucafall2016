@@ -1,7 +1,7 @@
 module MUX5 (
   input [4:0] data0_i,
   input [4:0] data1_i,
-  output select_i,
+  input select_i,
   output [4:0] data_o
 );
 

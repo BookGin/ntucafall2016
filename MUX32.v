@@ -1,7 +1,7 @@
 module MUX32 (
   input [31:0] data0_i,
   input [31:0] data1_i,
-  output select_i,
+  input select_i,
   output [31:0] data_o
 );
 
