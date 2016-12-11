@@ -2,6 +2,8 @@
 `include "Control.v"
 `include "Adder.v"
 `include "MUX5.v"
+`include "MUX_Forward.v" // for mux 6, 7
+`include "MUX8.v" // for mux 8
 `include "MUX32.v"
 `include "PC.v"
 `include "Registers.v"
@@ -17,6 +19,10 @@
 `include "EX_MEM.v"
 `include "MEM_WB.v"
 
+// Forwarding Unit & Hazzard Detection Unit
+`include "ForwardingUnit.v"
+`include "HazzardDetection.v"
+
 module CPU (
   input clk_i,
   input rst_i,
@@ -26,6 +32,11 @@ module CPU (
 parameter PC_ADVANCE_NUM = 32'd4;
 wire registers_equal = (Registers.RSdata_o == Registers.RTdata_o);
 wire pc_src_branch_select = Control.IsBranch_o & registers_equal;
+
+/* Flush START */
+wire flush;
+assign flush = Control.IsJump_o | pc_src_branch_select;
+/* Flush END */
 
 Control Control (
   .Op_i       (IF_ID.inst_o[31:26]),
@@ -81,6 +92,7 @@ PC PC (
   .rst_i      (rst_i),
   .start_i    (start_i),
   .pc_i       (MUX_PCSrc_Jump.data_o),
+  .IsHazzard_i(HD_Unit.PC_Write),
   .pc_o       ()
 );
 
@@ -93,6 +105,13 @@ IF_ID IF_ID (
   .clk_i      (clk_i),
   .inst_i     (Instruction_Memory.instr_o),
   .pc_i       (Add_PCAdvance.data_o),
+  .hazard_in  (HD_Unit.IF_ID_Write),
+  .flush      (
+    Control.IsJump_o |
+    (Control.IsBranch_o & 
+      (Registers.RSdata_o == Registers.RTdata_o)
+    )
+  ),
   .inst_o     (),
   .pc_o       ()
 );
@@ -109,13 +128,13 @@ ID_EX ID_EX (
   .SignExtended_o(),
 
   //control
-  .RegDst_i   (Control.RegDst_o),
-  .ALUOp_i    (Control.ALUOp_o),
-  .ALUSrc_i   (Control.ALUSrc_o),
-  .RegWrite_i (Control.RegWrite_o),
-  .MemToReg_i (Control.MemToReg_o),
-  .MemRead_i  (), // NOTE: THIS PORT IS DANGLING
-  .MemWrite_i (Control.MemWrite_o),
+  .RegDst_i   (MUX8.RegDst_o),
+  .ALUOp_i    (MUX8.ALUOp_o),
+  .ALUSrc_i   (MUX8.ALUSrc_o),
+  .RegWrite_i (MUX8.RegWrite_o),
+  .MemToReg_i (MUX8.MemToReg_o),
+  .MemRead_i  (MUX8.MemRead_o),
+  .MemWrite_i (MUX8.MemWrite_o),
   .RegDst_o   (),
   .ALUOp_o    (),
   .ALUSrc_o   (),
@@ -183,7 +202,7 @@ MUX5 MUX_RegDst (
 );
 
 MUX32 MUX_ALUSrc (
-  .data0_i    (ID_EX.RDData1_o),
+  .data0_i    (MUX7.data_o),
   .data1_i    (ID_EX.SignExtended_o),
   .select_i   (ID_EX.ALUSrc_o),
   .data_o     ()
@@ -195,7 +214,7 @@ Sign_Extend Sign_Extend (
 );
 
 ALU ALU (
-  .data0_i    (ID_EX.RDData0_o),
+  .data0_i    (MUX6.data_o),
   .data1_i    (MUX_ALUSrc.data_o),
   .ALUCtrl_i  (ALU_Control.ALUCtrl_o),
   .data_o     (),
@@ -222,6 +241,71 @@ Memory Data_Memory (
   .MemRead_i  (EX_MEM.MemRead_o),
   .MemWrite_i (EX_MEM.MemWrite_o),
   .RDdata_o   ()
+);
+
+Forwarding FW_Unit (
+  .ID_EX_RegisterRs   (ID_EX.inst_o[25:21]),
+  .ID_EX_RegisterRt   (ID_EX.inst_o[20:16]), 
+  .EX_MEM_RegisterRd  (EX_MEM.RDaddr_o), // mux3.data_o
+  .MEM_WB_RegisterRd  (MEM_WB.RDaddr_o), // mux3.data_o
+  
+  // control 
+  .EX_MEM_RegWrite    (EX_MEM.RegWrite_o),
+  .MEM_WB_RegWrite    (MEM_WB.RegWrite_o),
+  .ForwardA           (),
+  .ForwardB           ()
+);
+
+HazzardDetection HD_Unit (
+  .IF_ID_RegisterRs (IF_ID.inst_o[25:21]), 
+  .IF_ID_RegisterRt (IF_ID.inst_o[20:16]),
+  .ID_EX_RegisterRt (ID_EX.inst_o[20:16]),
+
+  // control
+  .ID_EX_MemRead_i  (ID_EX.MemRead_o), // ID_EX.MemRead_o
+  .PC_Write         (),
+  .IF_ID_Write      (),
+  .data_o           () // for mux 8
+);
+
+MUX_Forward MUX6 (
+  .data0_i      (ID_EX.RDData0_o), // ID_EX.RDdata0_out
+  .data1_i      (MUX_RegDst.data_o), // from mux5 REG's result
+  .data2_i      (EX_MEM.ALUResult_o), // from EX's result 
+  .data_o       (),
+
+  // control
+  .IsForward_i  (FW_Unit.ForwardA)
+);
+
+MUX_Forward MUX7 (
+  .data0_i      (ID_EX.RDData1_o), // ID_EX.RDdata1_out
+  .data1_i      (MUX_RegDst.data_o), // from mux5 REG's result
+  .data2_i      (EX_MEM.ALUResult_o), // from EX's result 
+  .data_o       (),
+
+  // control
+  .IsForward_i  (FW_Unit.ForwardB)
+);
+
+MUX8 MUX8 (
+  .IsHazzard_i  (HD_Unit.data_o),
+
+  .RegDst_i     (Control.RegDst_o),
+  .ALUOp_i      (Control.ALUOp_o),
+  .ALUSrc_i     (Control.ALUSrc_i),
+  .RegWrite_i   (Control.RegWrite_o),
+  .MemToReg_i   (Control.MemToReg_o),
+  .MemRead_i    (Control.MemRead_i),
+  .MemWrite_i   (Control.MemWrite_o),
+
+  .RegDst_o     (),
+  .ALUOp_o      (),
+  .ALUSrc_o     (),
+  .RegWrite_o   (),
+  .MemToReg_o   (),
+  .MemRead_o    (),
+  .MemWrite_o   ()
 );
 
 endmodule
