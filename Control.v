@@ -5,6 +5,7 @@ module Control (
   output ALUSrc_o,
   output RegWrite_o,
   output MemToReg_o,
+  output MemRead_o,
   output MemWrite_o,
   output IsBranch_o,
   output IsJump_o
@@ -22,6 +23,7 @@ assign RegDst_o = (Op_i == R_TYPE);
 assign ALUSrc_o = (Op_i == ADDI) | (Op_i == LW) | (Op_i == SW);
 assign MemToReg_o = (Op_i == LW);
 assign RegWrite_o = (Op_i == R_TYPE) | (Op_i == ADDI) | (Op_i == LW);
+assign MemRead_o = (Op_i == LW);
 assign MemWrite_o = (Op_i == SW);
 assign IsBranch_o = (Op_i == BEQ);
 assign IsJump_o = (Op_i == JMP);
