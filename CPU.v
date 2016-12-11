@@ -33,6 +33,8 @@ Control Control (
   .ALUOp_o    (),
   .ALUSrc_o   (),
   .RegWrite_o (),
+  .MemToReg_o (),
+  .MemWrite_o (),
   .IsBranch_o (),
   .IsJump_o   ()
 );
