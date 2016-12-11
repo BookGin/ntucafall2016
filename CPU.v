@@ -11,7 +11,7 @@
 `include "Sign_Extend.v"
 `include "Shift_Left2.v"
 
-//pipeline registers
+// pipeline registers
 `include "IF_ID.v"
 `include "ID_EX.v"
 `include "EX_MEM.v"
@@ -34,7 +34,7 @@ Control Control (
   .ALUSrc_o   (),
   .RegWrite_o (),
   .IsBranch_o (),
-  .IsJump_o ()
+  .IsJump_o   ()
 );
 
 Adder Add_PCAdvance (
@@ -95,66 +95,66 @@ IF_ID IF_ID (
 );
 
 ID_EX ID_EX (
-  .clk_i(clk_i),
-  .pc_i(IF_ID.pc_o),
-  .inst_i(IF_ID.inst_o),
-  .RDData0_i(Registers.RSdata_o),
-  .RDData1_i(Registers.RTdata_o),
+  .clk_i      (clk_i),
+  .pc_i       (IF_ID.pc_o),
+  .inst_i     (IF_ID.inst_o),
+  .RDData0_i  (Registers.RSdata_o),
+  .RDData1_i  (Registers.RTdata_o),
   .SignExtended_i(Sign_Extend.data_o),
-  .RDData0_o(),
-  .RDData1_o(),
+  .RDData0_o  (),
+  .RDData1_o  (),
   .SignExtended_o(),
 
   //control
-  .RegDst_i(Control.RegDst_o),
-  .ALUOp_i(Control.ALUOp_o),
-  .ALUSrc_i(Control.ALUSrc_o),
-  .RegWrite_i(Control.RegWrite_o),
-  .MemToReg_i(Control.MemToReg_o),
-  .MemWrite_i(Control.MemWrite_o),
-  .RegDst_o(),
-  .ALUOp_o(),
-  .ALUSrc_o(),
-  .RegWrite_o(),
-  .MemToReg_o(),
-  .MemWrite_o()
+  .RegDst_i   (Control.RegDst_o),
+  .ALUOp_i    (Control.ALUOp_o),
+  .ALUSrc_i   (Control.ALUSrc_o),
+  .RegWrite_i (Control.RegWrite_o),
+  .MemToReg_i (Control.MemToReg_o),
+  .MemWrite_i (Control.MemWrite_o),
+  .RegDst_o   (),
+  .ALUOp_o    (),
+  .ALUSrc_o   (),
+  .RegWrite_o (),
+  .MemToReg_o (),
+  .MemWrite_o ()
 );
 
 EX_MEM EX_MEM (
-  .clk_i(clk_i),
-  .pc_i(ID_EX.pc_o),
-  .zero_i(ALU.zero_o),
+  .clk_i      (clk_i),
+  .pc_i       (ID_EX.pc_o),
+  .zero_i     (ALU.zero_o),
   .ALUResult_i(ALU.data_o),
-  .RDData_i(ID_EX.RDData1_o),
-  .RDaddr_i(MUX_RegDst.data_o),
-  .pc_o(),
-  .zero_o(),
+  .RDData_i   (ID_EX.RDData1_o),
+  .RDaddr_i   (MUX_RegDst.data_o),
+  .pc_o       (),
+  .zero_o     (),
   .ALUResult_o(),
-  .RDData_o(),
-  .RDaddr_o(),
+  .RDData_o   (),
+  .RDaddr_o   (),
   //control
-  .RegWrite_o(),
-  .MemToReg_o(),
-  .MemWrite_o(),
-  .RegWrite_i(ID_EX.RegWrite_o),
-  .MemToReg_i(ID_EX.MemToReg_o),
-  .MemWrite_i(ID_EX.MemWrite_o)
+  .RegWrite_o (),
+  .MemToReg_o (),
+  .MemWrite_o (),
+  .RegWrite_i (ID_EX.RegWrite_o),
+  .MemToReg_i (ID_EX.MemToReg_o),
+  .MemWrite_i (ID_EX.MemWrite_o)
 );
 
 MEM_WB MEM_WB (
-  .clk_i(clk_i),
-  .RDData_i(Data_Memory.RDdata_o),
+  .clk_i      (clk_i),
+  .RDData_i   (Data_Memory.RDdata_o),
   .ALUResult_i(EX_MEM.ALUResult_o),
-  .RDaddr_i(EX_MEM.RDaddr_o),
-  .RDaddr_o(),
-  .RDData_o(),
+  .RDaddr_i   (EX_MEM.RDaddr_o),
+  .RDaddr_o   (),
+  .RDData_o   (),
   .ALUResult_o(),
 
   //control
-  .RegWrite_o(),
-  .MemToReg_o(),
-  .RegWrite_i(EX_MEM.RegWrite_o),
-  .MemToReg_i(EX_MEM.MemToReg_o)
+  .RegWrite_o (),
+  .MemToReg_o (),
+  .RegWrite_i (EX_MEM.RegWrite_o),
+  .MemToReg_i (EX_MEM.MemToReg_o)
 );
 
 Registers Registers (
@@ -209,11 +209,11 @@ MUX32 MUX_MemDst (
 );
 
 Memory Data_Memory (
-  .clk_i(clk_i),
-  .RDaddr_i(EX_MEM.ALUResult_o),
-  .RDdata_i(EX_MEM.RDData_o),
-  .MemWrite_i(EX_MEM.MemWrite_o),
-  .RDdata_o()
+  .clk_i      (clk_i),
+  .RDaddr_i   (EX_MEM.ALUResult_o),
+  .RDdata_i   (EX_MEM.RDData_o),
+  .MemWrite_i (EX_MEM.MemWrite_o),
+  .RDdata_o   ()
 );
 
 endmodule
