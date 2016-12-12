@@ -1,4 +1,4 @@
-module Forwarding 
+module Forwarding
 (
   input EX_MEM_RegWrite,
   input MEM_WB_RegWrite,
@@ -20,9 +20,9 @@ always @(*) begin
   Forwarda = 2'b00;
   Forwardb = 2'b00;
   /*  EX Hazard */
-  if (EX_MEM_RegWrite && 
+  if (EX_MEM_RegWrite &&
       EX_MEM_RegisterRd != 5'b0 &&
-      EX_MEM_RegisterRd == ID_EX_RegisterRs)
+      EX_MEM_RegisterRd == MEM_WB_RegisterRd)
       Forwarda = 2'b10;
   if (EX_MEM_RegWrite &&
       EX_MEM_RegisterRd != 5'b0 &&

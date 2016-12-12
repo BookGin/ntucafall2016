@@ -7,12 +7,12 @@ module MEM_WB
    output reg [4:0] RDaddr_o=5'd0,
    output reg [31:0] RDData_o=32'd0,
    output reg [31:0] ALUResult_o=32'd0,
-		     
+
 		     //control
    output 	     RegWrite_o,
    output 	     MemToReg_o,
-   output 	     RegWrite_i,
-   output 	     MemToReg_i
+   input 	     RegWrite_i,
+   input 	     MemToReg_i
    );
 
 
@@ -27,7 +27,7 @@ module MEM_WB
       RDData_o <= RDData_i;
       ALUResult_o <= ALUResult_i;
       RDaddr_o <= RDaddr_i;
-      
+
       //control
       RegWrite_or <= RegWrite_i;
       MemToReg_or <= MemToReg_i;
