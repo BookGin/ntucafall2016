@@ -28,4 +28,4 @@ The instructions don't contain any hazard. It's used to test pipeline without co
 The instructions contains some hazards. It's copied from `project1_src/instruction.txt`. 
 
 ### `fibonacci`
-Test for Fibonacci sequence. It's copied from `../../project1_src/Fibonacci_instruction.txt`.
+Test for Fibonacci sequence. It's copied from `project1_src/Fibonacci_instruction.txt`.
