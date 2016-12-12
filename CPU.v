@@ -57,21 +57,14 @@ Adder Add_PCAdvance (
   .data_o     ()
 );
 
-Shift_Left2 Shift_Left2_Branch (
-  .data_i     (Sign_Extend.data_o),
-  .data_o     ()
-);
-
 Adder Add_PCBranch (
   .data0_i    (IF_ID.pc_o),
   .data1_i    (Shift_Left2_Branch.data_o),
   .data_o     ()
 );
 
-MUX32 MUX_PCSrc_Branch (
-  .data0_i    (Add_PCAdvance.data_o),
-  .data1_i    (Add_PCBranch.data_o),
-  .select_i   (pc_src_branch_select),
+Shift_Left2 Shift_Left2_Branch (
+  .data_i     (Sign_Extend.data_o),
   .data_o     ()
 );
 
@@ -80,10 +73,8 @@ Shift_Left2 Shift_Left2_Jump (
   .data_o     ()
 );
 
-MUX32 MUX_PCSrc_Jump (
-  .data0_i    (MUX_PCSrc_Branch.data_o),
-  .data1_i    ({Add_PCAdvance.data_o[31:28], Shift_Left2_Jump.data_o[27:0]}),
-  .select_i   (Control.IsJump_o),
+Sign_Extend Sign_Extend (
+  .data_i     (IF_ID.inst_o[15:0]),
   .data_o     ()
 );
 
@@ -194,25 +185,6 @@ Registers Registers (
   .RTdata_o   ()
 );
 
-MUX5 MUX_RegDst (
-  .data0_i    (ID_EX.inst_o[20:16]),
-  .data1_i    (ID_EX.inst_o[15:11]),
-  .select_i   (ID_EX.RegDst_o),
-  .data_o     ()
-);
-
-MUX32 MUX_ALUSrc (
-  .data0_i    (MUX7.data_o),
-  .data1_i    (ID_EX.SignExtended_o),
-  .select_i   (ID_EX.ALUSrc_o),
-  .data_o     ()
-);
-
-Sign_Extend Sign_Extend (
-  .data_i     (IF_ID.inst_o[15:0]),
-  .data_o     ()
-);
-
 ALU ALU (
   .data0_i    (MUX6.data_o),
   .data1_i    (MUX_ALUSrc.data_o),
@@ -225,13 +197,6 @@ ALU_Control ALU_Control (
   .funct_i    (ID_EX.inst_o[5:0]),
   .ALUOp_i    (ID_EX.ALUOp_o),
   .ALUCtrl_o  ()
-);
-
-MUX32 MUX_MemDst (
-  .data0_i    (MEM_WB.ALUResult_o),
-  .data1_i    (MEM_WB.RDData_o),
-  .select_i   (MEM_WB.MemToReg_o),
-  .data_o     ()
 );
 
 Memory Data_Memory (
@@ -266,6 +231,41 @@ HazzardDetection HD_Unit (
   .PC_Write         (),
   .IF_ID_Write      (),
   .data_o           () // for mux 8
+);
+
+MUX5 MUX_RegDst (
+  .data0_i    (ID_EX.inst_o[20:16]),
+  .data1_i    (ID_EX.inst_o[15:11]),
+  .select_i   (ID_EX.RegDst_o),
+  .data_o     ()
+);
+
+MUX32 MUX_PCSrc_Branch (
+  .data0_i    (Add_PCAdvance.data_o),
+  .data1_i    (Add_PCBranch.data_o),
+  .select_i   (pc_src_branch_select),
+  .data_o     ()
+);
+
+MUX32 MUX_PCSrc_Jump (
+  .data0_i    (MUX_PCSrc_Branch.data_o),
+  .data1_i    ({Add_PCAdvance.data_o[31:28], Shift_Left2_Jump.data_o[27:0]}),
+  .select_i   (Control.IsJump_o),
+  .data_o     ()
+);
+
+MUX32 MUX_ALUSrc (
+  .data0_i    (MUX7.data_o),
+  .data1_i    (ID_EX.SignExtended_o),
+  .select_i   (ID_EX.ALUSrc_o),
+  .data_o     ()
+);
+
+MUX32 MUX_MemDst (
+  .data0_i    (MEM_WB.ALUResult_o),
+  .data1_i    (MEM_WB.RDData_o),
+  .select_i   (MEM_WB.MemToReg_o),
+  .data_o     ()
 );
 
 MUX_Forward MUX6 (
