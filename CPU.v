@@ -270,7 +270,7 @@ HazzardDetection HD_Unit (
 
 MUX_Forward MUX6 (
   .data0_i      (ID_EX.RDData0_o), // ID_EX.RDdata0_out
-  .data1_i      (MUX_RegDst.data_o), // from mux5 REG's result
+  .data1_i      (MUX_MemDst.data_o), // from mux5 REG's result
   .data2_i      (EX_MEM.ALUResult_o), // from EX's result 
   .data_o       (),
 
@@ -280,7 +280,7 @@ MUX_Forward MUX6 (
 
 MUX_Forward MUX7 (
   .data0_i      (ID_EX.RDData1_o), // ID_EX.RDdata1_out
-  .data1_i      (MUX_RegDst.data_o), // from mux5 REG's result
+  .data1_i      (MUX_MemDst.data_o), // from mux5 REG's result
   .data2_i      (EX_MEM.ALUResult_o), // from EX's result 
   .data_o       (),
 
