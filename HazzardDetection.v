@@ -9,7 +9,7 @@ module HazzardDetection (
 );
 
 assign data_o = (
-  (ID_EX_MemRead &&
+  (ID_EX_MemRead_i &&
     (ID_EX_RegisterRt == IF_ID_RegisterRs ||
      ID_EX_RegisterRt == IF_ID_RegisterRt))? 1'b1 :
   1'b0
