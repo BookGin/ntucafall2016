@@ -36,7 +36,7 @@ initial begin
     for(i=0; i<32; i=i+1) begin
         CPU.Registers.register[i] = 32'b0;
     end
-
+    CPU.Data_Memory.memory[0] = 8'd5;
     // Load instructions into instruction memory
     $readmemb("instruction.txt", CPU.Instruction_Memory.memory);
 
