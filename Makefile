@@ -6,11 +6,9 @@ default:
 	iverilog $(FLAGS) -o testbench testbench.v
 
 run:
-	./testbench | tee result
-	@echo
-	@echo '** Write output to "./result"'
+	./testbench
 
 remake: clean default
 
 clean:
-	rm -f testbench output.txt test.vcd result
+	rm -f testbench output.txt output.vcd

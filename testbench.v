@@ -17,7 +17,7 @@ CPU CPU(
 );
 
 initial begin
-    $dumpfile("test.vcd");
+    $dumpfile("output.vcd");
     $dumpvars;
     counter = 0;
     stall = 0;
@@ -64,7 +64,7 @@ always@(posedge Clk) begin
         flush = flush + 1;
 
     // print PC
-    $fdisplay(outfile, "cycle = %d, Start = %d, Stall = %d, Flush = %d\n", counter, Start, stall, flush);
+    $fdisplay(outfile, "cycle = %d, Start =%2d, Stall =%2d, Flush =%2d", counter, Start, stall, flush);
     $fdisplay(outfile, "PC = %d", CPU.PC.pc_o);
 
     // print Registers
