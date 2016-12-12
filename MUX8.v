@@ -14,6 +14,7 @@ module MUX8 (
 	output ALUSrc_o,
 	output RegWrite_o,
 	output MemToReg_o,
+	output MemRead_o,
 	output MemWrite_o
 );
 

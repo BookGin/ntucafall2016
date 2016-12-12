@@ -3,9 +3,9 @@ module HazzardDetection (
     input [4:0] IF_ID_RegisterRs,
     input [4:0] IF_ID_RegisterRt,
     input [4:0] ID_EX_RegisterRt,
-    ouput PC_Write,
-    ouput IF_ID_Write,
-    ouput data_o
+    output PC_Write,
+    output IF_ID_Write,
+    output data_o
 );
 
 assign data_o = (
