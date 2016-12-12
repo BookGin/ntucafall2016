@@ -3,10 +3,10 @@ FLAGS = -Wall
 .PHONY: default run remake clean
 
 default:
-	iverilog $(FLAGS) testbench.v -o testbench
+	iverilog $(FLAGS) -o testbench testbench.v
 
 run:
-	timeout 1 ./testbench | tee result
+	./testbench | tee result
 	@echo
 	@echo '** Write output to "./result"'
 
