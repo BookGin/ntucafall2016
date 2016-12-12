@@ -27,8 +27,4 @@ assign data_o = (
 );
 assign zero_o = (data_o == 0) ? 1 : 0;
 
-always @* begin
-  $display("ALU: a=%d, b=%d, aluctl=%b, result=%d", data0_i, data1_i, ALUCtrl_i, data_o);
-end
-
 endmodule
