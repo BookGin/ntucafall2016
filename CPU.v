@@ -108,7 +108,7 @@ IF_ID IF_ID (
   .hazard_in  (HD_Unit.IF_ID_Write),
   .flush      (
     Control.IsJump_o |
-    (Control.IsBranch_o & 
+    (Control.IsBranch_o &
       (Registers.RSdata_o == Registers.RTdata_o)
     )
   ),
@@ -149,7 +149,7 @@ EX_MEM EX_MEM (
   .pc_i       (ID_EX.pc_o),
   .zero_i     (ALU.zero_o),
   .ALUResult_i(ALU.data_o),
-  .RDData_i   (ID_EX.RDData1_o),
+  .RDData_i   (MUX7.data_o),
   .RDaddr_i   (MUX_RegDst.data_o),
   .pc_o       (),
   .zero_o     (),
@@ -245,11 +245,11 @@ Memory Data_Memory (
 
 Forwarding FW_Unit (
   .ID_EX_RegisterRs   (ID_EX.inst_o[25:21]),
-  .ID_EX_RegisterRt   (ID_EX.inst_o[20:16]), 
+  .ID_EX_RegisterRt   (ID_EX.inst_o[20:16]),
   .EX_MEM_RegisterRd  (EX_MEM.RDaddr_o), // mux3.data_o
   .MEM_WB_RegisterRd  (MEM_WB.RDaddr_o), // mux3.data_o
-  
-  // control 
+
+  // control
   .EX_MEM_RegWrite    (EX_MEM.RegWrite_o),
   .MEM_WB_RegWrite    (MEM_WB.RegWrite_o),
   .ForwardA           (),
@@ -257,7 +257,7 @@ Forwarding FW_Unit (
 );
 
 HazzardDetection HD_Unit (
-  .IF_ID_RegisterRs (IF_ID.inst_o[25:21]), 
+  .IF_ID_RegisterRs (IF_ID.inst_o[25:21]),
   .IF_ID_RegisterRt (IF_ID.inst_o[20:16]),
   .ID_EX_RegisterRt (ID_EX.inst_o[20:16]),
 
@@ -271,7 +271,7 @@ HazzardDetection HD_Unit (
 MUX_Forward MUX6 (
   .data0_i      (ID_EX.RDData0_o), // ID_EX.RDdata0_out
   .data1_i      (MUX_MemDst.data_o), // from mux5 REG's result
-  .data2_i      (EX_MEM.ALUResult_o), // from EX's result 
+  .data2_i      (EX_MEM.ALUResult_o), // from EX's result
   .data_o       (),
 
   // control
@@ -281,7 +281,7 @@ MUX_Forward MUX6 (
 MUX_Forward MUX7 (
   .data0_i      (ID_EX.RDData1_o), // ID_EX.RDdata1_out
   .data1_i      (MUX_MemDst.data_o), // from mux5 REG's result
-  .data2_i      (EX_MEM.ALUResult_o), // from EX's result 
+  .data2_i      (EX_MEM.ALUResult_o), // from EX's result
   .data_o       (),
 
   // control
