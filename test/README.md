@@ -20,5 +20,9 @@ Test for those instructions for single-cycle CPU:
 - j
 
 ## Pipeline CPU Test
+
 ### `pipeline_ins_no_hazard`
 The instructions don't contain any hazard. It's used to test pipeline without considering hazrads.
+
+### `pipeline_ins_with_hazard`
+The instructions contains some hazards. It's copied from `project1_src/instruction.txt`. 
