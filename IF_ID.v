@@ -9,7 +9,6 @@ module IF_ID (
 );
 
 always @(posedge clk_i) begin
-  inst_o <= inst_i;
   pc_o <= pc_i;
   inst_o <= (
   	(flush)? 32'b0 : // flush
