@@ -22,6 +22,7 @@
 // Forwarding Unit & Hazzard Detection Unit
 `include "ForwardingUnit.v"
 `include "HazzardDetection.v"
+`include "ID_Forwarding.v"
 
 module CPU (
   input clk_i,
@@ -308,6 +309,16 @@ MUX8 MUX8 (
   .MemToReg_o   (),
   .MemRead_o    (),
   .MemWrite_o   ()
+);
+
+ID_Forwarding ID_FW_Unit (
+  .IF_ID_RegisterRs   (IF_ID.inst_o[25:21]),
+  .IF_ID_RegisterRt   (IF_ID.inst_o[20:16]),
+  .MEM_WB_RegisterRd  (MEM_WB.RDaddr_o), // mux3.data_o
+  // control
+  .MEM_WB_RegWrite    (MEM_WB.RegWrite_o),
+  .ForwardA           (),
+  .ForwardB           ()
 );
 
 endmodule
