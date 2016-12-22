@@ -22,7 +22,7 @@ always @(*) begin
   /*  EX Hazard */
   if (EX_MEM_RegWrite &&
       EX_MEM_RegisterRd != 5'b0 &&
-      EX_MEM_RegisterRd == MEM_WB_RegisterRd)
+      EX_MEM_RegisterRd == ID_EX_RegisterRs)
       Forwarda = 2'b10;
   if (EX_MEM_RegWrite &&
       EX_MEM_RegisterRd != 5'b0 &&
