@@ -117,6 +117,8 @@ ID_EX ID_EX (
   .RDData0_o  (),
   .RDData1_o  (),
   .SignExtended_o(),
+  .inst_o(),
+  .pc_o(),
 
   //control
   .RegDst_i   (MUX8.RegDst_o),
