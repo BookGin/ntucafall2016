@@ -112,8 +112,8 @@ ID_EX ID_EX (
   .clk_i      (clk_i),
   .pc_i       (IF_ID.pc_o),
   .inst_i     (IF_ID.inst_o),
-  .RDData0_i  (Registers.RSdata_o),
-  .RDData1_i  (Registers.RTdata_o),
+  .RDData0_i  (ID_Rs_Forward.data_o),
+  .RDData1_i  (ID_Rt_Forward.data_o),
   .SignExtended_i(Sign_Extend.data_o),
   .RDData0_o  (),
   .RDData1_o  (),
@@ -310,6 +310,21 @@ MUX8 MUX8 (
   .MemRead_o    (),
   .MemWrite_o   ()
 );
+
+MUX32 ID_Rs_Forward (
+  .data0_i    (Registers.RSdata_o),
+  .data1_i    (MUX_MemDst.data_o),
+  .select_i   (ID_FW_Unit.ForwardA),
+  .data_o     ()
+);
+
+MUX32 ID_Rt_Forward (
+  .data0_i    (Registers.RTdata_o),
+  .data1_i    (MUX_MemDst.data_o),
+  .select_i   (ID_FW_Unit.ForwardB),
+  .data_o     ()
+);
+
 
 ID_Forwarding ID_FW_Unit (
   .IF_ID_RegisterRs   (IF_ID.inst_o[25:21]),
