@@ -3,7 +3,7 @@ FLAGS = -Wall
 .PHONY: default run remake clean
 
 default:
-	iverilog $(FLAGS) -o testbench testbench_cache.v
+	iverilog $(FLAGS) -o testbench Testbench.v
 
 run:
 	./testbench
