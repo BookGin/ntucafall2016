@@ -11,4 +11,4 @@ run:
 remake: clean default
 
 clean:
-	rm -f testbench output.txt output.vcd
+	rm -f testbench output.txt cache.txt output.vcd
