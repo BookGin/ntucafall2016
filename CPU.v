@@ -91,8 +91,9 @@ PC PC (
   .clk_i      (clk_i),
   .rst_i      (rst_i),
   .start_i    (start_i),
+  .stall_i    (dcache_top.p1_stall_o),
+  .pcEnable_i (HD_Unit.PC_Write),
   .pc_i       (MUX_PCSrc_Jump.data_o),
-  .IsHazzard_i(HD_Unit.PC_Write),
   .pc_o       ()
 );
 
