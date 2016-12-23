@@ -1,4 +1,4 @@
-`include "Data_Memory.v"
+//`include "Data_Memory.v"
 `include "Control.v"
 `include "Adder.v"
 `include "MUX5.v"
@@ -32,15 +32,15 @@
 module CPU (
   input clk_i,
   input rst_i,
-  input start_i
+  input start_i,
 
   // For cache
-  input [256-1:0] mem_data_i,
-  input mem_ack_i,
+  input  [256-1:0] mem_data_i,
+  input            mem_ack_i,
   output [256-1:0] mem_data_o,
   output [32-1:0]  mem_addr_o,
-  output mem_enable_o,
-  output mem_write_o
+  output           mem_enable_o,
+  output           mem_write_o
 );
 
 parameter PC_ADVANCE_NUM = 32'd4;
@@ -96,7 +96,7 @@ PC PC (
   .clk_i      (clk_i),
   .rst_i      (rst_i),
   .start_i    (start_i),
-  .stall_i    (dcache_top.p1_stall_o),
+  .stall_i    (Data_Cache.p1_stall_o),
   .pcEnable_i (HD_Unit.PC_Write),
   .pc_i       (MUX_PCSrc_Jump.data_o),
   .pc_o       ()
