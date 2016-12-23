@@ -11,20 +11,20 @@ module Registers
 );
 
 // Interface
-input				  clk_i;
-input	[4:0]		RSaddr_i;
-input	[4:0]		RTaddr_i;
-input	[4:0]		RDaddr_i;
+input	clk_i;
+input	[4:0]	RSaddr_i;
+input	[4:0]	RTaddr_i;
+input	[4:0]	RDaddr_i;
 input	[31:0]	RDdata_i;
-input				  RegWrite_i;
+input	RegWrite_i;
 
-output	[31:0]		RSdata_o; 
-output	[31:0]		RTdata_o;
+output	[31:0]	RSdata_o; 
+output	[31:0]	RTdata_o;
 
 
    
 // Register Bank
-reg		[31:0]		register		[0:31];
+reg		[31:0]	register [0:31];
       
 // Read Data      
 assign	RSdata_o = register[RSaddr_i];

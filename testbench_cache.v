@@ -2,10 +2,10 @@
 
 module TestBench;
 
-reg				Clk;
-reg				Reset;
-reg				Start;
-integer			i, outfile, outfile2, counter;
+reg		Clk;
+reg		Reset;
+reg		Start;
+integer	i, outfile, outfile2, counter;
 reg					flag;
 reg		[26:0]		address;
 reg		[23:0]		tag;
@@ -36,7 +36,7 @@ CPU CPU(
 Data_Memory Data_Memory
 (
 	.clk_i    (Clk),
-  .rst_i    (Reset),
+    .rst_i    (Reset),
 	.addr_i   (cpu_mem_addr),
 	.data_i   (cpu_mem_data),
 	.enable_i (cpu_mem_enable),
