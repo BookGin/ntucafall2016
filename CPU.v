@@ -96,7 +96,7 @@ PC PC (
   .clk_i      (clk_i),
   .rst_i      (rst_i),
   .start_i    (start_i),
-  .stall_i    (Data_Cache.p1_stall_o),
+  .stall_i    (dcache.p1_stall_o),
   .pcEnable_i (HD_Unit.PC_Write),
   .pc_i       (MUX_PCSrc_Jump.data_o),
   .pc_o       ()
@@ -177,7 +177,7 @@ EX_MEM EX_MEM (
 
 MEM_WB MEM_WB (
   .clk_i      (clk_i),
-  .RDData_i   (Data_Cache.p1_data_o),
+  .RDData_i   (dcache.p1_data_o),
   .ALUResult_i(EX_MEM.ALUResult_o),
   .RDaddr_i   (EX_MEM.RDaddr_o),
   .RDaddr_o   (),
@@ -216,7 +216,7 @@ ALU_Control ALU_Control (
   .ALUCtrl_o  ()
 );
 
-dcache_top Data_Cache (
+dcache_top dcache (
   // System clock, reset and stall
   .clk_i        (clk_i),
   .rst_i        (rst_i),
