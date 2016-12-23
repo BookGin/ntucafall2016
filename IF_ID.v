@@ -14,8 +14,7 @@ always @(posedge clk_i) begin
   end
   else begin
     pc_o <= pc_i;
-    inst_o <= (
-      (stall_i)? 
+    inst_o <= ( 
       (flush)? 32'b0 : // flush
       (hazard_in)? inst_o : // stall
       inst_i
