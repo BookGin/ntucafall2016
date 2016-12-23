@@ -6,6 +6,7 @@ module ID_EX
    input [31:0]      RDData0_i,
    input [31:0]      RDData1_i,
    input [31:0]      SignExtended_i,
+   input         stall_i,
    output reg [31:0] RDData0_o = 32'd0,
    output reg [31:0] RDData1_o = 32'd0,
    output reg [31:0] SignExtended_o = 32'd0,
@@ -48,19 +49,24 @@ module ID_EX
 
 
    always@(posedge clk_i) begin
-      RDData0_o <= RDData0_i;
-      RDData1_o <= RDData1_i;
-      SignExtended_o <= SignExtended_i;
-      pc_o <= pc_i;
-      inst_o <= inst_i;
-      //control
-      RegDst_or <= RegDst_i;
-      ALUOp_or <= ALUOp_i;
-      ALUSrc_or <= ALUSrc_i;
-      RegWrite_or <= RegWrite_i;
-      MemToReg_or <= MemToReg_i;
-      MemRead_or <= MemRead_i;
-      MemWrite_or <= MemWrite_i;
+      if (stall_i) begin
+      end
+      else begin
+         RDData0_o <= RDData0_i;
+         RDData1_o <= RDData1_i;
+         SignExtended_o <= SignExtended_i;
+         pc_o <= pc_i;
+         inst_o <= inst_i;
+         //control
+         RegDst_or <= RegDst_i;
+         ALUOp_or <= ALUOp_i;
+         ALUSrc_or <= ALUSrc_i;
+         RegWrite_or <= RegWrite_i;
+         MemToReg_or <= MemToReg_i;
+         MemRead_or <= MemRead_i;
+         MemWrite_or <= MemWrite_i;
+      end
+      
    end
 
 endmodule

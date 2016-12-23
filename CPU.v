@@ -118,6 +118,7 @@ IF_ID IF_ID (
       (Registers.RSdata_o == Registers.RTdata_o)
     )
   ),
+  .stall_i    (dcache.p1_stall_o),
   .inst_o     (),
   .pc_o       ()
 );
@@ -129,6 +130,7 @@ ID_EX ID_EX (
   .RDData0_i  (ID_Rs_Forward.data_o),
   .RDData1_i  (ID_Rt_Forward.data_o),
   .SignExtended_i(Sign_Extend.data_o),
+  .stall_i    (dcache.p1_stall_o),
   .RDData0_o  (),
   .RDData1_o  (),
   .SignExtended_o(),
@@ -159,6 +161,7 @@ EX_MEM EX_MEM (
   .ALUResult_i(ALU.data_o),
   .RDData_i   (MUX7.data_o),
   .RDaddr_i   (MUX_RegDst.data_o),
+  .stall_i    (dcache.p1_stall_o),
   .pc_o       (),
   .zero_o     (),
   .ALUResult_o(),
@@ -180,6 +183,7 @@ MEM_WB MEM_WB (
   .RDData_i   (dcache.p1_data_o),
   .ALUResult_i(EX_MEM.ALUResult_o),
   .RDaddr_i   (EX_MEM.RDaddr_o),
+  .stall_i    (dcache.p1_stall_o),
   .RDaddr_o   (),
   .RDData_o   (),
   .ALUResult_o(),
