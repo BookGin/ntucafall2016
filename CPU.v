@@ -24,6 +24,11 @@
 `include "HazzardDetection.v"
 `include "ID_Forwarding.v"
 
+// Cache Unit
+`include "dcache_data_sram.v"
+`include "dcache_tag_sram.v"
+`include "dcache_top.v"
+
 module CPU (
   input clk_i,
   input rst_i,
