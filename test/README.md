@@ -29,3 +29,6 @@ The instructions contains some hazards. It's copied from `project1_src/instructi
 
 ### `fibonacci`
 Test for Fibonacci sequence. It's copied from `project1_src/Fibonacci_instruction.txt`.
+
+## `cache`
+Test for project2 L1 cache.
