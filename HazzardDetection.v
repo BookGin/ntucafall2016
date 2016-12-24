@@ -15,7 +15,7 @@ assign data_o = (
   1'b0
 );
 
-assign PC_Write = data_o;
+assign PC_Write = ~data_o;
 assign IF_ID_Write = data_o;
 
 endmodule

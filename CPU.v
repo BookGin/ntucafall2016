@@ -1,4 +1,4 @@
-`include "Data_Memory.v"
+//`include "Data_Memory.v"
 `include "Control.v"
 `include "Adder.v"
 `include "MUX5.v"
@@ -24,10 +24,23 @@
 `include "HazzardDetection.v"
 `include "ID_Forwarding.v"
 
+// Cache Unit
+`include "dcache_data_sram.v"
+`include "dcache_tag_sram.v"
+`include "dcache_top.v"
+
 module CPU (
   input clk_i,
   input rst_i,
-  input start_i
+  input start_i,
+
+  // For cache
+  input  [256-1:0] mem_data_i,
+  input            mem_ack_i,
+  output [256-1:0] mem_data_o,
+  output [32-1:0]  mem_addr_o,
+  output           mem_enable_o,
+  output           mem_write_o
 );
 
 parameter PC_ADVANCE_NUM = 32'd4;
@@ -83,8 +96,9 @@ PC PC (
   .clk_i      (clk_i),
   .rst_i      (rst_i),
   .start_i    (start_i),
+  .stall_i    (dcache.p1_stall_o),
+  .pcEnable_i (HD_Unit.PC_Write),
   .pc_i       (MUX_PCSrc_Jump.data_o),
-  .IsHazzard_i(HD_Unit.PC_Write),
   .pc_o       ()
 );
 
@@ -104,6 +118,7 @@ IF_ID IF_ID (
       (Registers.RSdata_o == Registers.RTdata_o)
     )
   ),
+  .stall_i    (dcache.p1_stall_o),
   .inst_o     (),
   .pc_o       ()
 );
@@ -115,6 +130,7 @@ ID_EX ID_EX (
   .RDData0_i  (ID_Rs_Forward.data_o),
   .RDData1_i  (ID_Rt_Forward.data_o),
   .SignExtended_i(Sign_Extend.data_o),
+  .stall_i    (dcache.p1_stall_o),
   .RDData0_o  (),
   .RDData1_o  (),
   .SignExtended_o(),
@@ -145,6 +161,7 @@ EX_MEM EX_MEM (
   .ALUResult_i(ALU.data_o),
   .RDData_i   (MUX7.data_o),
   .RDaddr_i   (MUX_RegDst.data_o),
+  .stall_i    (dcache.p1_stall_o),
   .pc_o       (),
   .zero_o     (),
   .ALUResult_o(),
@@ -163,9 +180,10 @@ EX_MEM EX_MEM (
 
 MEM_WB MEM_WB (
   .clk_i      (clk_i),
-  .RDData_i   (Data_Memory.RDdata_o),
+  .RDData_i   (dcache.p1_data_o),
   .ALUResult_i(EX_MEM.ALUResult_o),
   .RDaddr_i   (EX_MEM.RDaddr_o),
+  .stall_i    (dcache.p1_stall_o),
   .RDaddr_o   (),
   .RDData_o   (),
   .ALUResult_o(),
@@ -202,13 +220,26 @@ ALU_Control ALU_Control (
   .ALUCtrl_o  ()
 );
 
-Memory Data_Memory (
-  .clk_i      (clk_i),
-  .RDaddr_i   (EX_MEM.ALUResult_o),
-  .RDdata_i   (EX_MEM.RDData_o),
-  .MemRead_i  (EX_MEM.MemRead_o),
-  .MemWrite_i (EX_MEM.MemWrite_o),
-  .RDdata_o   ()
+dcache_top dcache (
+  // System clock, reset and stall
+  .clk_i        (clk_i),
+  .rst_i        (rst_i),
+
+  // to Data Memory interface
+  .mem_data_i   (mem_data_i),
+  .mem_ack_i    (mem_ack_i),
+  .mem_data_o   (mem_data_o),
+  .mem_addr_o   (mem_addr_o),
+  .mem_enable_o (mem_enable_o),
+  .mem_write_o  (mem_write_o),
+
+  // to CPU interface
+  .p1_data_i    (EX_MEM.RDData_o),
+  .p1_addr_i    (EX_MEM.ALUResult_o),
+  .p1_MemRead_i (EX_MEM.MemRead_o),
+  .p1_MemWrite_i(EX_MEM.MemWrite_o),
+  .p1_data_o    (),
+  .p1_stall_o   ()
 );
 
 Forwarding FW_Unit (
